@@ -1,0 +1,33 @@
+{
+    "Asuntos ticket": "Asuntos ticket",
+    "Estados ticket": "Estados ticket",
+    "Estado de lectura ticket": "Estado de lectura ticket",
+    "Nombre grupo": "Nombre grupo",
+    "Descripción del grupo": "Descripción del grupo",
+
+    "Seller ID": "Seller ID",
+    "Bodega ID": "Bodega ID",
+    "Ingrese los valores separados por coma": "Ingrese los valores separados por coma",
+
+    "Fecha creación": "Fecha creación",
+    "Fecha estado": "Fecha estado",
+    "Fecha compromiso": "Fecha compromiso",
+    "Fecha primer estado carrier": "Fecha primer estado carrier",
+    "Fecha última incidencia": "Fecha última incidencia",
+
+    "Estados tracking": "Estados tracking",
+    "Comentario estado": "Comentario estado",
+
+    "Nombre cliente": "Nombre cliente",
+    "Celular": "Celular",
+    "Dirección": "Dirección",
+    "Bultos": "Bultos",
+    "Producto": "Producto",
+    "Valor producto": "Valor producto",
+    "Observaciones": "Observaciones",
+    "Peso": "Peso",
+    "Volumen": "Volumen",
+    "Dirección retiro": "Dirección retiro",
+    "Desde": "Desde",
+    "Hasta": "Hasta"
+}

@@ -1,0 +1,23 @@
+{
+  "Subir": "Subir",
+  "restrictions-avatar": "PNG, GIF, JPG o JPEG",
+  "Contraseña actual": "Contraseña actual",
+  "Nueva contraseña": "Nueva contraseña",
+  "Repita nueva contraseña": "Repita nueva contraseña",
+  "Longitud de al menos 10 caracteres": "Longitud de al menos 10 caracteres",
+  "Debe contener al menos una letra mayúscula": "Debe contener al menos una letra mayúscula",
+  "Debe contener al menos una letra minúscula": "Debe contener al menos una letra minúscula",
+  "Debe contener al menos un número": "Debe contener al menos un número",
+  "Debe contener al menos un caracter especial (!@#$%^&*)": "Debe contener al menos un caracter especial (!@#$%^&*)",
+  "Las contraseñas deben ser idénticas en ambos campos": "Las contraseñas deben ser idénticas en ambos campos",
+  "Nombre": "Nombre",
+  "Apellido": "Apellido",
+  "Formato fecha": "Formato fecha",
+  "Zona horaria": "Zona horaria",
+  "Guardar cambios": "Guardar cambios",
+  "Limpiar formulario": "Limpiar formulario",
+  "General": "General",
+  "Cambiar contraseña": "Cambiar contraseña",
+  "Actualizar": "Actualizar",
+  "Ingrese nueva contraseña": "Ingrese nueva contraseña"
+}

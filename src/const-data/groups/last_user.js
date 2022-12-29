@@ -1,0 +1,1 @@
+export default [{id: '', text: 'Indistinto'}, {id: 'client', text: 'Cliente'}, {id: 'agent', text: 'Agente'}]

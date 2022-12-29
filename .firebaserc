@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "master": "madagascar-ms",
+    "stage": "madagascar-stage",
+    "default": "madagascar-stage"
+  }
+}

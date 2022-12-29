@@ -1,0 +1,22 @@
+{
+  "Mínimo": "Mínimo",
+  "Máximo": "Máximo",
+  "Anidar": "Anidar",
+  "Tipo de regla": "Tipo de regla",
+  "Atributos": "Atributos",
+  "Servicios": "Servicios",
+  "Carriers": "Carriers",
+  "Tipos": "Tipos",
+  "Default": "Default",
+  "Localidades": "Localidades",
+  "Condición": "Condición",
+  "Crear sub-configuracion": "Crear sub-configuracion",
+  "SAME_TYPE": "Hay una o más configuraciones anidadas repetidas con el mismo tipo. Cada configuración anidada no puede ser del mismo tipo que ninguna de sus configuraciones superiores",
+  "MISS_CARRIER": "La condición debe finalizar siempre con la selección de \"Carrier\" y sus caracteristicas",
+  "WRONG_ORDER": "La configuración de tipo \"Carrier\" debe ser la última y no podrá contener configuraciones anidadas",
+  "MISS_FIELD": "No ha completado todos los campos de una o más configuraciones",
+  "MIXED_VALUES": "Los valores de una o más configuraciones no están correctamente ingresados",
+  "WRONG_VALUE": "Los valores de una más configuraciones no son válidos",
+  "MISS_PLACES": "Las configuraciones de tipo \"Localidades\" deben tener al menos 1 elemento seleccionado",
+  "INVALID_OUTPUT": "El tipo de regla \"Carrier\" no puede convivir con otros \"Tipos de regla\" al mismo nivel."
+}

@@ -1,0 +1,13 @@
+{
+    "Nombre del Carrier": "Nombre del Carrier",
+    "Carrier Manager": "Carrier Manager",
+    "Cantidad máxima de bultos": "Cantidad máxima de bultos",
+    "Cantidad máxima de bultos retiros": "Cantidad máxima de bultos retiros",
+    "Tiempo de respuesta BO solicitudes": "Tiempo de respuesta BO solicitudes",
+    "Tiempo máximo reclamo": "Tiempo máximo reclamo",
+    "Tiempo máximo indemnización": "Tiempo máximo indemnización",
+    "Tiempo pago indemnización": "Tiempo pago indemnización",
+    "Monto cobertura sin seguro": "Monto cobertura sin seguro",
+    "% seguro adicional": "% seguro adicional",
+    "Tope indemnización con seguro": "Tope indemnización con seguro"
+}

@@ -1,0 +1,30 @@
+steps:
+    - name: 'node:14'
+      id: 'Set environment'
+      entrypoint: bash
+      args: 
+        - '-c'
+        - |
+          if [ "$BRANCH_NAME" == "master" ]; then
+            echo "SETTING -- PRODUCTION -- ENVIRONMENT VARIABLES";
+            cp ./src/environments/environment.prod.js ./src/environments/environment.js;
+          elif [ "$BRANCH_NAME" == "stage" ]; then
+            echo "SETTING -- STAGE -- ENVIRONMENT VARIABLES";
+            cp ./src/environments/environment.stage.js ./src/environments/environment.js;
+          fi
+    - name: 'node:14'
+      id: 'Install Front'
+      entrypoint: npm
+      args: ['install']
+    - name: 'node:14'
+      id: 'Build Front'
+      entrypoint: npm
+      args: ['run', 'build']
+    - name: gcr.io/${PROJECT_ID}/firebase
+      id: 'Deploy'
+      entrypoint: '/usr/local/bin/firebase'
+      args: ['deploy', '--only=hosting', '-P', '$BRANCH_NAME']
+timeout: 1200s
+
+
+## cd front; npm run build; mv dist ../firebase; cd ../firebase; firebase deploy --only hosting -P prod;rm -rf dist
