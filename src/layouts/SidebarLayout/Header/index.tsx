@@ -1,53 +1,37 @@
-import { IconButton, styled, Toolbar, Typography } from '@mui/material'
-import MuiAppBar, { AppBarProps } from '@mui/material/AppBar'
-import { drawerWidth } from '../Sidebar'
-import MenuIcon from '@mui/icons-material/Menu'
+import { Box, styled, Typography, useTheme } from '@mui/material'
+import { useAppSelector } from '../../../store/useRedux'
+import HeaderUserbox from './HeaderUserbox'
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open'
-})<AppBarProps & { open: boolean }>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
-  })
+const HeaderWrapper = styled(Box)(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: '5px'
 }))
 
-function Header ({
-  open,
-  handleDrawerOpen
-}: {
-  open: boolean
-  handleDrawerOpen: () => void
-}) {
+const LabelWrapper = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center'
+}))
+
+const Header = () => {
+  const { pageName } = useAppSelector((state) => state.auth)
+  const theme = useTheme()
   return (
-    <AppBar position="fixed" open={open}>
-      <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          edge="start"
+    <HeaderWrapper>
+      <LabelWrapper>
+        <Typography
+          component={'span'}
           sx={{
-            marginRight: 5,
-            ...(open && { display: 'none' })
+            fontSize: '18px',
+            color: `${theme.palette.primary.main}`,
+            fontWeight: 'bold'
           }}
         >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" noWrap component="div">
-          Mini variant drawer
+          {pageName}
         </Typography>
-      </Toolbar>
-    </AppBar>
+      </LabelWrapper>
+      <HeaderUserbox />
+    </HeaderWrapper>
   )
 }
 

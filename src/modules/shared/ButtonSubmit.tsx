@@ -11,6 +11,7 @@ type ButtonSubmitProps = ButtonProps & CustomProps
 export const ButtonSubmit = ({
   isLoading,
   icon,
+  sx,
   children,
   ...propsButton
 }: ButtonSubmitProps) => {
@@ -20,10 +21,15 @@ export const ButtonSubmit = ({
         type="submit"
         variant="contained"
         disabled={isLoading}
-        sx={{ background: 'linear-gradient(90deg, #F49143 -21.52%, #F4BB43 104.43%)', boxShadow: 'none' }}
+        sx={{
+          background:
+            'linear-gradient(90deg, #F49143 -21.52%, #F4BB43 104.43%)',
+          boxShadow: 'none',
+          ...sx
+        }}
         startIcon={
           isLoading ? (
-            <CircularProgress color="secondary" size={20} />
+            <CircularProgress size={20} />
           ) : icon === 'nope' ? (
             ''
           ) : (

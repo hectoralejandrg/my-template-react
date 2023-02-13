@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 export interface AuthState {
   user?: any
   token?: string
+  pageName?: string | null
 }
 
 const initialState = {
@@ -13,15 +14,18 @@ const authSlice = createSlice({
   name: 'authSlice',
   initialState,
   reducers: {
-    setToken (state, action: PayloadAction<string>) {
+    setLogout: () => initialState,
+    setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload
     },
-    setUser (state, action: PayloadAction<any>) {
+    setUser: (state, action: PayloadAction<any>) => {
       state.user = action.payload
     },
-    setLogout: () => initialState
+    setPageName: (state, action: PayloadAction<string | null>) => {
+      state.pageName = action.payload
+    }
   }
 })
 
-export const { setToken, setUser, setLogout } = authSlice.actions
+export const { setToken, setUser, setLogout, setPageName } = authSlice.actions
 export default authSlice.reducer

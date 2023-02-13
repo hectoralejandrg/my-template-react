@@ -1,11 +1,13 @@
 ## How to install
 
-Instalar los node modules con 
+Instalar los node modules con el comando:
 
 ```
 npm install
 ```
-Crear un archivo `.env` con los peromisos de firebase
+
+Crear un archivo `.env` con los permisos de firebase.
+
 ## How to start
 
 Despues de instalar las dependencias:
