@@ -15,7 +15,6 @@ import { usePageName } from '../../hooks/usePageName'
 const ItemList = ({ open }: { open: boolean }) => {
   const dispatch = useAppDispatch()
   const { pageName } = usePageName()
-  console.log('pageName', pageName)
   const theme = useTheme()
   const navigate = useNavigate()
   const handleNavigate = (link: string, name: string, index: number) => {

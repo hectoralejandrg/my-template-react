@@ -8,21 +8,38 @@ const styleLabel = {
     marginTop: 3
   }
 }
+interface ValuesFormik {
+  reference: string
+  status: string
+  comment: string
+  proof: File[]
+}
 const FormUpdateTracking = () => {
-  const { handleSubmit, handleChange, values, touched, errors } = useFormik({
-    initialValues: {
-      reference: '',
-      status: '',
-      comment: '',
-      proof: null
-    },
-    //   validationSchema: loginSchema,
-    onSubmit: ({ reference, status, comment, proof }) => {
-      console.log(reference, status, comment, proof)
+  const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
+    useFormik<ValuesFormik>({
+      initialValues: {
+        reference: '',
+        status: '',
+        comment: '',
+        proof: []
+      },
+      //   validationSchema: loginSchema,
+      onSubmit: ({ reference, status, comment, proof }) => {
+        console.log(reference, status, comment, proof)
+      }
+    })
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file: File[] = []
+    if (e.target.value.length > 0) {
+      for (const f of e.target.files!) {
+        file.push(f)
+      }
+      setFieldValue('proof', file)
     }
-  })
+  }
   return (
-    <Grid container item sx={{ width: '100%', p: 5 }}>
+    <Grid container item sx={{ width: '100%' }} padding={{ xs: 0, sm: 5 }}>
       <Box
         component="form"
         noValidate
@@ -82,7 +99,14 @@ const FormUpdateTracking = () => {
               helperText={touched.comment && errors.comment}
             />
           </FormControl>
-          <InputFile />
+          <InputFile
+            title="Adjuntar prueba"
+            id="proof"
+            accept=".jpg,.jpeg,.png"
+            files={values.proof}
+            setFieldValue={setFieldValue}
+            onChange={(e) => handleFile(e)}
+          />
           <Grid container justifyContent="flex-end">
             <ButtonSubmit isLoading={false} icon="nope" sx={{ px: 10 }}>
               Actualizar
