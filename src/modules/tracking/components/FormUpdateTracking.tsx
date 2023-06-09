@@ -2,12 +2,14 @@ import { Box, FormControl, Grid, InputLabel, TextField } from '@mui/material'
 import { useFormik } from 'formik'
 import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import InputFile from '../../shared/InputFile'
+import StatusInput from '../../shared/StatusInput'
 
 const styleLabel = {
   'label + &': {
     marginTop: 3
   }
 }
+
 interface ValuesFormik {
   reference: string
   status: string
@@ -48,7 +50,7 @@ const FormUpdateTracking = () => {
       >
         <Grid container gap={3}>
           <FormControl variant="standard" fullWidth>
-            <InputLabel htmlFor="status" shrink sx={{ fontSize: 20 }}>
+            <InputLabel shrink sx={{ fontSize: 20 }}>
               N° de referencia
             </InputLabel>
             <TextField
@@ -63,23 +65,12 @@ const FormUpdateTracking = () => {
               helperText={touched.reference && errors.reference}
             />
           </FormControl>
-          <FormControl variant="standard" fullWidth>
-            <InputLabel htmlFor="status" shrink sx={{ fontSize: 20 }}>
-              Estado
-            </InputLabel>
-            <TextField
-              id="status"
-              name="status"
-              type="status"
-              size="small"
-              fullWidth
-              sx={styleLabel}
-              value={values.status}
-              onChange={handleChange}
-              error={touched.status && Boolean(errors.status)}
-              helperText={touched.status && errors.status}
-            />
-          </FormControl>
+          <StatusInput
+            inputLabel="Estado"
+            keyStatus="id"
+            value={values.status}
+            onChange={(e) => setFieldValue('status', e.target.value)}
+          />
           <FormControl variant="standard" fullWidth>
             <InputLabel htmlFor="comment" shrink sx={{ fontSize: 20 }}>
               Comentario

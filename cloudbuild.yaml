@@ -1,0 +1,26 @@
+steps:
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: "bash"
+    args:
+      [
+        "-c",
+        "gcloud secrets versions access latest --secret=gae-enviatrackweb --project=$_PROJECT_ID --format='get(payload.data)' | tr '_-' '/+' | base64 -d > /workspace/.env",
+      ]
+  - id: gae-install
+    name: node
+    entrypoint: yarn
+    args: ["install"]
+
+  - id: gae-prepare
+    name: node
+    entrypoint: yarn
+    args: ["steep1"]
+
+  - id: gae-build
+    name: node
+    entrypoint: yarn
+    args: ["steep2"]
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: gae-deploy
+    args: ["app", "deploy", "--project=$_PROJECT_ID"]

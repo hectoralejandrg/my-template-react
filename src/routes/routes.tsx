@@ -15,9 +15,13 @@ const Loader = (Component: any) => (props: any) =>
     </Suspense>
   )
 
+const PageRecovery = Loader(lazy(() => import('../modules/auth/recovery/page')))
+const PageResetPassword = Loader(lazy(() => import('../modules/auth/recovery/page/resetPassword')))
 // const Authentication = Loader(lazy(() => import('./modules/auth/login/page')))
-const PageTracking = Loader(lazy(() => import('../modules/tracking/page')))
-const PageDeliveries = Loader(lazy(() => import('../modules/deliveries/page')))
+const PageTracking = Loader(lazy(() => import('../modules/tracking/pages')))
+const PageDeliveries = Loader(lazy(() => import('../modules/deliveries/pages')))
+const PageSummaries = Loader(lazy(() => import('../modules/summaries/pages')))
+const PageUsers = Loader(lazy(() => import('../modules/users/pages')))
 
 const routes: RouteObject[] = [
   {
@@ -25,7 +29,9 @@ const routes: RouteObject[] = [
     element: <HomeLayout />,
     children: [
       { path: '', element: <Navigate to="/login" replace /> },
-      { path: 'login', element: <LoginPage /> }
+      { path: 'login', element: <LoginPage /> },
+      { path: 'recovery-password', element: <PageRecovery /> },
+      { path: 'reset-password', element: <PageResetPassword /> }
     ]
   },
   {
@@ -47,6 +53,14 @@ const routes: RouteObject[] = [
           {
             path: 'deliveries',
             element: <PageDeliveries />
+          },
+          {
+            path: 'summaries',
+            element: <PageSummaries />
+          },
+          {
+            path: 'users',
+            element: <PageUsers />
           }
         ]
       }

@@ -15,6 +15,7 @@ export const useStateChange = () => {
         currentUser.getIdToken().then((token) => {
           dispatch(setToken(token))
         })
+        currentUser.getIdTokenResult().then((claims) => console.log('cccc', claims.claims))
       }
       setLoading(false)
     })

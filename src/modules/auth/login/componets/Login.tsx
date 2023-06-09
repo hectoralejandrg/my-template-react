@@ -67,7 +67,7 @@ const Login = () => {
               error={touched.password && Boolean(errors.password)}
               helperText={touched.password && errors.password}
             />
-            <Link href="#" fontSize={11}>
+            <Link href="/recovery-password" fontSize={11}>
               ¿Olvidaste tu contraseña?
             </Link>
           </Grid>
