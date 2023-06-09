@@ -4,7 +4,7 @@ steps:
     args:
       [
         "-c",
-        "gcloud secrets versions access latest --secret=gae-enviatrackweb --project=$_PROJECT_ID --format='get(payload.data)' | tr '_-' '/+' | base64 -d > /workspace/.env",
+        "gcloud secrets versions access latest --secret=gae-enviatrackweb --project=$_PROJECT_ID --format='get(payload.data)' | tr '_-' '/+' | base64 -d > /workspace/app.yaml",
       ]
   - id: gae-install
     name: node
