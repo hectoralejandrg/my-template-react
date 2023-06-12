@@ -36,8 +36,8 @@ const SelectGeneric = <T extends unknown>({
       </InputLabel>
       <Select sx={styleLabelSelect} size="small" variant="outlined" {...props}>
         {data?.map((rol, index) => (
-          <MenuItem key={`${rol[keyId]}-${index}`} value={rol[keyValue]}>
-            {rol[keyName]}
+          <MenuItem key={`${rol[keyId]}-${index}`} value={`${rol[keyValue]}`}>
+            {`${rol[keyName]}`}
           </MenuItem>
         ))}
       </Select>
