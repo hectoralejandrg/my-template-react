@@ -48,8 +48,28 @@ export const usersApiSlice = apiUsersTags.injectEndpoints({
         }
       },
       providesTags: (data) => data ? [...data?.map(({ id }) => ({ type: 'Companies' as const, id })), 'Companies'] : ['Companies']
-    })
+    }),
+    createUser: builder.mutation<void, { name:string, email:string, active: boolean, role: number, company?: string }>(
+      {
+        queryFn: async (params) => {
+          try {
+            const { data } = await mainApi.post('users', { ...params })
+            return { data }
+          } catch (error: any) {
+            return {
+              error
+            }
+          }
+        },
+        invalidatesTags: ['Users']
+      }
+    )
   })
 })
 
-export const { useGetUsersQuery, useGetRolesQuery, useGetCompaniesQuery } = usersApiSlice
+export const {
+  useGetUsersQuery,
+  useGetRolesQuery,
+  useGetCompaniesQuery,
+  useCreateUserMutation
+} = usersApiSlice

@@ -4,6 +4,7 @@ export interface AuthState {
   user?: any
   token?: string
   pageName?: string | null
+  roleId?: number
 }
 
 const initialState = {
@@ -23,9 +24,13 @@ const authSlice = createSlice({
     },
     setPageName: (state, action: PayloadAction<string | null>) => {
       state.pageName = action.payload
+    },
+    setRoleId: (state, action: PayloadAction<number>) => {
+      state.roleId = action.payload
     }
   }
 })
 
-export const { setToken, setUser, setLogout, setPageName } = authSlice.actions
+export const { setToken, setUser, setLogout, setPageName, setRoleId } =
+  authSlice.actions
 export default authSlice.reducer

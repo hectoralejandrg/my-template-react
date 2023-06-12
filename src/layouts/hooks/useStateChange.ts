@@ -1,7 +1,11 @@
 import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect, useState } from 'react'
 import { auth } from '../../firebase'
-import { setToken, setUser } from '../../modules/auth/slice/authSlice'
+import {
+  setRoleId,
+  setToken,
+  setUser
+} from '../../modules/auth/slice/authSlice'
 import { useAppDispatch, useAppSelector } from '../../store/useRedux'
 
 export const useStateChange = () => {
@@ -14,8 +18,11 @@ export const useStateChange = () => {
         dispatch(setUser(currentUser))
         currentUser.getIdToken().then((token) => {
           dispatch(setToken(token))
+          localStorage.setItem('token', token)
         })
-        currentUser.getIdTokenResult().then((claims) => console.log('cccc', claims.claims))
+        currentUser
+          .getIdTokenResult()
+          .then((claims) => dispatch(setRoleId(claims.claims.role)))
       }
       setLoading(false)
     })

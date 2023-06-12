@@ -4,19 +4,22 @@ import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import SelectRoles from './SelectRoles'
 import { useFormik } from 'formik'
 import SelectCompanies from './SelectCompanies'
+import { useCreateUserMutation } from '../slice/usersApiSlice'
 
 const FormNewUser = () => {
+  const [createUser, { isLoading }] = useCreateUserMutation()
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
     useFormik({
       initialValues: {
         name: '',
-        roles: '',
+        role: '',
         email: '',
         company: ''
       },
       //   validationSchema: loginSchema,
-      onSubmit: ({ roles, company }) => {
-        console.log(roles, company)
+      onSubmit: async ({ role, company, email, name }) => {
+        console.log(role, company)
+        await createUser({ email, name, active: true, role: Number(role), company })
       }
     })
   return (
@@ -40,8 +43,8 @@ const FormNewUser = () => {
         />
         <CustomInput
           inputLabel="Email"
-          id="rut"
-          name="rut"
+          id="email"
+          name="email"
           type="text"
           size="small"
           value={values.email}
@@ -49,17 +52,19 @@ const FormNewUser = () => {
           error={touched.email && Boolean(errors.email)}
           helperText={touched.email && errors.email}
         />
-        <SelectCompanies
-          value={values.company}
-          onChange={(e) => setFieldValue('company', e.target.value)}
-        />
         <SelectRoles
-          value={values.roles}
-          onChange={(e) => setFieldValue('roles', e.target.value)}
+          value={values.role}
+          onChange={(e) => setFieldValue('role', e.target.value)}
         />
+        {values.role === '2' && (
+          <SelectCompanies
+            value={values.company}
+            onChange={(e) => setFieldValue('company', e.target.value)}
+          />
+        )}
         <Grid container justifyContent="flex-end">
           <ButtonSubmit
-            isLoading={false}
+            isLoading={isLoading}
             icon="nope"
             sx={{ px: 10, width: '100%' }}
           >
