@@ -16,10 +16,10 @@ steps:
   #   entrypoint: yarn
   #   args: ["steep1"]
 
-  # - id: gae-build
-  #   name: node
-  #   entrypoint: yarn
-  #   args: ["steep2"]
+  - id: gae-build
+    name: node
+    entrypoint: yarn
+    args: ["build"]
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: gae-deploy
