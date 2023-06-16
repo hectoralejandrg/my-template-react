@@ -2,11 +2,11 @@ import {
   Box,
   IconButton,
   Paper,
-  Switch,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TablePagination,
   TableRow,
   Tooltip,
   styled,
@@ -17,8 +17,12 @@ import TableHeadUsers, { HeadCell } from './TableHeadUsers'
 import { Pagination } from '../../deliveries/components/TableDeliveries'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
-import { Users } from '../interfaces/users.interface'
+import { Users, UsersResponse } from '../interfaces/users.interface'
 import dayjs from 'dayjs'
+import TableRowsLoader from '../../shared/Table/TableRowsLoader'
+import SwitchStatus from './SwitchStatus'
+import { useAppDispatch } from '../../../store/useRedux'
+import { setUsers } from '../slice/usersSlice'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -93,59 +97,34 @@ const headCell: HeadCell[] = [
 ]
 
 interface Props {
-  data?: Users[]
-  pagination?: Pagination
+  data?: UsersResponse
+  pagination: Pagination
   selected?: readonly string[]
-  setPagination?: React.Dispatch<React.SetStateAction<Pagination>>
-  handleModal?: () => void
+  setPagination: React.Dispatch<React.SetStateAction<Pagination>>
+  handleModal: (user?: Users) => void
+  handleModalUpdate: () => void
   setSelected?: React.Dispatch<React.SetStateAction<readonly string[]>>
+  isFetching: boolean
 }
 
-const TableUsers = ({ data }: Props) => {
-  //   const theme = useTheme()
+const TableUsers = ({
+  data,
+  pagination,
+  setPagination,
+  isFetching,
+  handleModal,
+  handleModalUpdate
+}: Props) => {
   const [rows, setRows] = useState<Users[]>([])
-
-  //   console.log('selected', selected)
-
-  //   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     if (event.target.checked) {
-  //       const newSelected = rows.map((n) => n.id.toString())
-  //       setSelected(newSelected)
-  //       return
-  //     }
-  //     setSelected([])
-  //   }
-
-  //   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-  //     const selectedIndex = selected.indexOf(id)
-  //     let newSelected: readonly string[] = []
-
-  //     if (selectedIndex === -1) {
-  //       newSelected = newSelected.concat(selected, id)
-  //     } else if (selectedIndex === 0) {
-  //       newSelected = newSelected.concat(selected.slice(1))
-  //     } else if (selectedIndex === selected.length - 1) {
-  //       newSelected = newSelected.concat(selected.slice(0, -1))
-  //     } else if (selectedIndex > 0) {
-  //       newSelected = newSelected.concat(
-  //         selected.slice(0, selectedIndex),
-  //         selected.slice(selectedIndex + 1)
-  //       )
-  //     }
-
-  //     setSelected(newSelected)
-  //   }
-
-  //   const isSelected = (id: string) => selected.indexOf(id) !== -1
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (data) setRows(data)
+    if (data) setRows(data?.users)
   }, [data])
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
-        {/* <TableToolbarUsers numSelected={selected.length} /> */}
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -154,60 +133,66 @@ const TableUsers = ({ data }: Props) => {
           >
             <TableHeadUsers headCells={headCell} />
             <TableBody>
-              {rows.map((row, index) => {
-                // const isItemSelected = isSelected(row?.imported_id)
-                // const labelId = `enhanced-table-checkbox-${index}`
-
-                return (
-                  <StyledTableRow
-                    hover
-                    // onClick={(event) => handleClick(event, row?.imported_id)}
-                    // role="checkbox"
-                    // aria-checked={isItemSelected}
-                    // tabIndex={-1}
-                    key={`${row?.id}-${index}`}
-                    // selected={isItemSelected}
-                    // sx={{ cursor: 'pointer' }}
-                  >
-                    <StyledTableCell align="center">{row?.id}</StyledTableCell>
-                    <StyledTableCell align="left">{row?.name}</StyledTableCell>
-                    <StyledTableCell align="left">{row?.email}</StyledTableCell>
-                    <StyledTableCell align="left">{row?.role?.name}</StyledTableCell>
-                    <StyledTableCell align="left">
-                      {dayjs(row?.created_at).format('DD-MM-YYYY HH:mm')}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      <Switch defaultChecked color="success" />
-                    </StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Tooltip title="Editar usuario" arrow>
-                        <IconButton
-                          color="inherit"
-                          size="small"
-                          onClick={() => console.log('click')}
-                        >
-                          <CreateOutlinedIcon
-                            fontSize="small"
-                            sx={{ color: '#1B8ACE' }}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Cambiar contrasena" arrow>
-                        <IconButton
-                          color="inherit"
-                          size="small"
-                          onClick={() => console.log('click')}
-                        >
-                          <VpnKeyOutlinedIcon
-                            fontSize="small"
-                            sx={{ color: '#1B8ACE' }}
-                          />
-                        </IconButton>
-                      </Tooltip>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                )
-              })}
+              {isFetching ? (
+                <TableRowsLoader
+                  rowsNum={pagination.limit}
+                  headNum={headCell.length}
+                />
+              ) : (
+                rows.map((row, index) => {
+                  return (
+                    <StyledTableRow hover key={`${row?.id}-${index}`}>
+                      <StyledTableCell align="center">
+                        {row?.id}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.name}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.email}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.role?.name}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {dayjs(row?.created_at).format('DD-MM-YYYY HH:mm')}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        <SwitchStatus user={row} />
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Tooltip title="Editar usuario" arrow>
+                          <IconButton
+                            color="inherit"
+                            size="small"
+                            onClick={() => {
+                              dispatch(setUsers(row))
+                              handleModalUpdate()
+                            }}
+                          >
+                            <CreateOutlinedIcon
+                              fontSize="small"
+                              sx={{ color: '#1B8ACE' }}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Cambiar contraseña" arrow>
+                          <IconButton
+                            color="inherit"
+                            size="small"
+                            onClick={() => handleModal(row)}
+                          >
+                            <VpnKeyOutlinedIcon
+                              fontSize="small"
+                              sx={{ color: '#1B8ACE' }}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  )
+                })
+              )}
               {/* {emptyRows > 0 && (
               <TableRow
                 style={{
@@ -220,19 +205,23 @@ const TableUsers = ({ data }: Props) => {
             </TableBody>
           </Table>
         </TableContainer>
-        {/* <TablePagination
-          component="div"
-          rowsPerPageOptions={[20, 30, 40, 50]}
-          count={data?.lastpage ?? 0}
-          page={pagination.page}
-          rowsPerPage={pagination.limit}
-          onPageChange={(_, page) =>
-            setPagination((prev) => ({ ...prev, page }))
-          }
-          onRowsPerPageChange={(e) => {
-            setPagination({ page: 0, limit: parseInt(e.target.value) })
-          }}
-        /> */}
+        {data?.users && (
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={[10, 20, 30, 40, 50]}
+            count={data.total}
+            page={pagination.page}
+            rowsPerPage={pagination.limit}
+            onPageChange={(_, page) =>
+              setPagination((prev) => ({ ...prev, page }))
+            }
+            onRowsPerPageChange={(e) =>
+              setPagination({ page: 0, limit: parseInt(e.target.value) })
+            }
+            labelRowsPerPage={'Items por página'}
+            labelDisplayedRows={({ from, to, count }) => `Items ${from}-${to} de un total de ${count} items`}
+          />
+        )}
       </Paper>
     </Box>
   )

@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
+import {
+  Dialog,
+  DialogProps,
+  DialogTitle,
+  IconButton
+} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
 interface ModalProps {
@@ -8,9 +13,11 @@ interface ModalProps {
   children?: string | JSX.Element | JSX.Element[]
 }
 
-const ModalEnhanced = ({ open, handleClose, title, children }: ModalProps) => {
+type ModalCustomProps = DialogProps & ModalProps
+
+const ModalEnhanced = ({ open, handleClose, title, children, ...props }: ModalCustomProps) => {
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} {...props}>
       <DialogTitle id="alert-dialog-title">
         {title}
         {handleClose && (
@@ -28,7 +35,7 @@ const ModalEnhanced = ({ open, handleClose, title, children }: ModalProps) => {
           </IconButton>
         )}
       </DialogTitle>
-      <DialogContent>{children}</DialogContent>
+      {children}
     </Dialog>
   )
 }

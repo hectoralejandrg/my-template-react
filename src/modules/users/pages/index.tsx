@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  Radio,
-  RadioGroup
-} from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import TableUsers from '../components/TableUsers'
 import ScreenWrapper from '../../shared/ScreenWrapper'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
@@ -14,6 +6,10 @@ import ModalEnhanced from '../../shared/ModalEnhanced'
 import { useState } from 'react'
 import FormNewUser from '../components/FormNewUser'
 import { useGetUsersQuery } from '../slice/usersApiSlice'
+import { Pagination } from '../../deliveries/components/TableDeliveries'
+import ComponentRecovery from '../components/ComponentRecovery'
+import { Users } from '../interfaces/users.interface'
+import FormUpdateUser from '../components/FormUpdateUser'
 
 export type DataUsers = {
   id: string
@@ -26,18 +22,34 @@ export type DataUsers = {
 
 const PageUsers = () => {
   const [open, setOpen] = useState(false)
+  const [edit, setEdit] = useState(false)
+  const [openRecovery, setOpenRecovery] = useState(false)
+  const [user, setUser] = useState<Users>()
+  const [pagination, setPagination] = useState<Pagination>({
+    page: 0,
+    limit: 10,
+    sort: 'DESC'
+  })
   const handleChangeModal = () => {
     setOpen((prev) => !prev)
   }
 
-  const { data } = useGetUsersQuery()
-  console.log(data)
+  const handleChangeModalRecovery = (user?: Users) => {
+    if (user) setUser(user)
+    setOpenRecovery((prev) => !prev)
+  }
+
+  const handleChangeModalUpdate = () => {
+    setEdit((prev) => !prev)
+  }
+
+  const { data, isFetching } = useGetUsersQuery({ ...pagination })
   return (
     <ScreenWrapper>
       <Box sx={{ marginBottom: 3 }}>
         <Grid container justifyContent={'space-between'}>
           <Grid item>
-            <FormControl>
+            {/* <FormControl>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
@@ -59,7 +71,7 @@ const PageUsers = () => {
                   label="Inactivos"
                 />
               </RadioGroup>
-            </FormControl>
+            </FormControl> */}
           </Grid>
           <Grid item>
             <Button
@@ -78,13 +90,38 @@ const PageUsers = () => {
           </Grid>
         </Grid>
       </Box>
-      <TableUsers data={data?.data} />
+      <TableUsers
+        data={data}
+        pagination={pagination}
+        setPagination={setPagination}
+        isFetching={isFetching}
+        handleModal={handleChangeModalRecovery}
+        handleModalUpdate={handleChangeModalUpdate}
+      />
       <ModalEnhanced
         title="Nuevo usuario"
         open={open}
         handleClose={handleChangeModal}
       >
-        <FormNewUser />
+        <FormNewUser handleClose={handleChangeModal} />
+      </ModalEnhanced>
+      <ModalEnhanced
+        title="Actualizar usuario"
+        open={edit}
+        handleClose={handleChangeModalUpdate}
+      >
+        <FormUpdateUser handleClose={handleChangeModalUpdate} />
+      </ModalEnhanced>
+      <ModalEnhanced
+        title="Recuperación contraseña"
+        open={openRecovery}
+        handleClose={handleChangeModalRecovery}
+        maxWidth="sm"
+      >
+        <ComponentRecovery
+          user={user}
+          handleClose={handleChangeModalRecovery}
+        />
       </ModalEnhanced>
     </ScreenWrapper>
   )

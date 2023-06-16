@@ -21,14 +21,14 @@ interface CustomProps {
 type CustomPropsSelect = CustomProps & SelectProps
 
 const StatusInput = ({ inputLabel, keyStatus, ...props }: CustomPropsSelect) => {
-  const { data: statuses } = useGetStatusesQuery()
+  const { data } = useGetStatusesQuery()
   return (
     <FormControl variant="standard" fullWidth>
       <InputLabel shrink sx={{ fontSize: 20 }}>
         {inputLabel}
       </InputLabel>
       <Select sx={styleLabelSelect} size="small" variant="outlined" {...props}>
-        {statuses?.map((status) => (
+        {data?.statuses?.map((status) => (
           <MenuItem key={status?.id} value={status[keyStatus] as string | number}>
             {status?.name}
           </MenuItem>

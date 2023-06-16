@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -17,6 +18,7 @@ interface CustomProps<T> {
   keyId: keyof T
   keyValue: keyof T
   keyName: keyof T
+  helperText?: string | false
 }
 
 export type CustomPropsSelect<T> = CustomProps<T> & SelectProps
@@ -27,10 +29,11 @@ const SelectGeneric = <T extends unknown>({
   keyId,
   keyName,
   data,
+  helperText,
   ...props
 }: CustomPropsSelect<T>) => {
   return (
-    <FormControl variant="standard" fullWidth>
+    <FormControl variant="standard" fullWidth error={props.error}>
       <InputLabel shrink sx={{ fontSize: 20 }}>
         {inputLabel}
       </InputLabel>
@@ -41,6 +44,7 @@ const SelectGeneric = <T extends unknown>({
           </MenuItem>
         ))}
       </Select>
+      <FormHelperText>{helperText}</FormHelperText>
     </FormControl>
   )
 }

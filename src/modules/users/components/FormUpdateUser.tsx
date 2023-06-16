@@ -1,48 +1,56 @@
-import { Box, DialogContent, Grid } from '@mui/material'
+import {
+  Box,
+  DialogContent,
+  FormControl,
+  Grid,
+  InputLabel,
+  Switch
+} from '@mui/material'
 import CustomInput from '../../shared/CustomInput'
-import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import SelectRoles from './SelectRoles'
+import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import { useFormik } from 'formik'
 import SelectCompanies from './SelectCompanies'
-import { useCreateUserMutation } from '../slice/usersApiSlice'
-import { useEffect } from 'react'
-import { newUserSchema } from '../utils/newUserSchema'
+import { useUpdateUserMutation } from '../slice/usersApiSlice'
 import { useAppSelector } from '../../../store/useRedux'
+import { useEffect } from 'react'
+import { updateUserSchema } from '../utils/updateUserSchema'
 
 interface Props {
   handleClose: () => void
 }
 
 interface PayloadUser {
-  name: string
+  id?: number
+  name?: string
   role: number
-  email: string
-  active: boolean
+  active?: boolean
   company?: number
 }
 
-const FormNewUser = ({ handleClose }: Props) => {
-  const [createUser, { isLoading }] = useCreateUserMutation()
+const FormUpdateUser = ({ handleClose }: Props) => {
+  const { users } = useAppSelector((state) => state.users)
   const { profile } = useAppSelector((state) => state.auth)
+  const [updateMutation, { isLoading }] = useUpdateUserMutation()
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
     useFormik({
       initialValues: {
-        name: '',
-        role: '',
-        email: '',
-        company: ''
+        name: users?.name,
+        role: users?.role?.id.toString(),
+        active: users?.active,
+        company: users?.company?.id
       },
-      validationSchema: newUserSchema,
-      onSubmit: async ({ role, company, email, name }) => {
+      validationSchema: updateUserSchema,
+      onSubmit: async ({ role, name, active, company }) => {
         const user: PayloadUser = {
+          id: users?.id,
           name,
-          email,
-          active: true,
+          active,
           role: Number(role)
         }
         if (profile?.role?.id !== 1) user.company = profile?.companyId
         if (profile?.role?.id === 1 && (role === '2' || role === '3')) user.company = Number(company)
-        await createUser({ ...user })
+        await updateMutation({ ...user })
           .unwrap()
           .then(() => handleClose())
       }
@@ -77,31 +85,27 @@ const FormNewUser = ({ handleClose }: Props) => {
             error={touched.name && Boolean(errors.name)}
             helperText={touched.name && errors.name}
           />
-          <CustomInput
-            inputLabel="Email"
-            id="email"
-            name="email"
-            type="text"
-            size="small"
-            value={values.email}
-            onChange={handleChange}
-            error={touched.email && Boolean(errors.email)}
-            helperText={touched.email && errors.email}
-          />
           <SelectRoles
             value={values.role}
             onChange={(e) => setFieldValue('role', e.target.value)}
-            error={touched.role && Boolean(errors.role)}
-            // helperText={touched.role && errors.role}
           />
           {validateCompany() && (
             <SelectCompanies
               value={values.company}
               onChange={(e) => setFieldValue('company', e.target.value)}
-              error={touched?.company && Boolean(errors?.company)}
-              helperText={touched?.company && errors?.company}
             />
           )}
+          <FormControl variant="standard" fullWidth>
+            <InputLabel shrink sx={{ fontSize: 20 }}>
+              Estado
+            </InputLabel>
+            <Switch
+              sx={{ marginTop: 2 }}
+              color="success"
+              checked={values?.active}
+              onChange={(e) => setFieldValue('active', e.target.checked)}
+            />
+          </FormControl>
           <Grid container justifyContent="flex-end">
             <ButtonSubmit
               isLoading={isLoading}
@@ -117,4 +121,4 @@ const FormNewUser = ({ handleClose }: Props) => {
   )
 }
 
-export default FormNewUser
+export default FormUpdateUser

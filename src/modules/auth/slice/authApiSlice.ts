@@ -37,13 +37,14 @@ export const authApiSlice = apiAuthTags.injectEndpoints({
         try {
           const data = await auth.signOut()
           dispatch(setLogout())
+          localStorage.clear()
           return { data }
         } catch (error) {
           return { error }
         }
       }
     }),
-    resetPasswordEmail: builder.mutation<void, { email: string }>({
+    resetPasswordEmail: builder.mutation<void, { email?: string }>({
       queryFn: async (params) => {
         try {
           const { data } = await mainApi.post('reset-password-email', {

@@ -93,6 +93,7 @@ const headCell: HeadCell[] = [
 export interface Pagination {
   page: number
   limit: number
+  sort?: string
 }
 
 const TableDeliveries = ({ data }: Props) => {

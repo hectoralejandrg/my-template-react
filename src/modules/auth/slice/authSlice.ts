@@ -1,15 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Profile } from '../interfaces/auth.interface'
 
 export interface AuthState {
   user?: any
   token?: string
   pageName?: string | null
-  roleId?: number
+  profile?: Profile
 }
 
-const initialState = {
-  token: ''
-} as AuthState
+const initialState = { token: '' } as AuthState
 
 const authSlice = createSlice({
   name: 'authSlice',
@@ -25,12 +24,12 @@ const authSlice = createSlice({
     setPageName: (state, action: PayloadAction<string | null>) => {
       state.pageName = action.payload
     },
-    setRoleId: (state, action: PayloadAction<number>) => {
-      state.roleId = action.payload
+    setProfile: (state, action: PayloadAction<Profile>) => {
+      state.profile = action.payload
     }
   }
 })
 
-export const { setToken, setUser, setLogout, setPageName, setRoleId } =
+export const { setToken, setUser, setLogout, setPageName, setProfile } =
   authSlice.actions
 export default authSlice.reducer

@@ -13,8 +13,8 @@ import {
 
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone'
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone'
-import { useAppDispatch } from '../../../store/useRedux'
-import { setLogout } from '../../../modules/auth/slice/authSlice'
+import { useLogoutMutation } from '../../../modules/auth/slice/authApiSlice'
+import { useAppSelector } from '../../../store/useRedux'
 
 const UserBoxButton = styled(Button)(({ theme }) => ({
   paddingLeft: 5,
@@ -38,12 +38,14 @@ const UserBoxLabel = styled(Typography)(() => ({
 }))
 
 const HeaderUserbox = () => {
-  const dispatch = useAppDispatch()
-  const user = {
-    name: 'Enviame',
+  const { profile } = useAppSelector((state) => state.auth)
+  const userProd = {
+    name: profile?.email,
     avatar: 'src/assets/pic.png',
-    jobtitle: ''
+    jobtitle: profile?.role?.name
   }
+
+  const [logout] = useLogoutMutation()
 
   const ref = useRef<any>(null)
 
@@ -57,18 +59,18 @@ const HeaderUserbox = () => {
     setOpen(false)
   }
 
-  const handleLogOut = (): void => {
-    localStorage.clear()
-    dispatch(setLogout())
+  const handleLogOut = async () => {
+    await logout()
   }
 
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar variant="circular" alt={user.name} src={user.avatar} />
+        <Avatar variant="circular" alt={userProd.name} src={userProd.avatar} />
         <Hidden mdDown>
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user?.name}</UserBoxLabel>
+            <UserBoxLabel variant="subtitle2">{userProd?.name}</UserBoxLabel>
+            <UserBoxLabel variant="subtitle2">{userProd?.jobtitle}</UserBoxLabel>
           </UserBoxText>
         </Hidden>
         <Hidden smDown>
@@ -91,12 +93,13 @@ const HeaderUserbox = () => {
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
           <Avatar
             variant="circular"
-            alt={user.name}
-            src={user.avatar}
+            alt={userProd?.name}
+            src={userProd?.avatar}
             sx={{ overflow: 'hidden' }}
           />
-          <UserBoxText sx={{ display: 'flex', alignItems: 'center' }}>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+          <UserBoxText>
+            <UserBoxLabel variant="subtitle2">{userProd?.name}</UserBoxLabel>
+            <UserBoxLabel variant="subtitle2">{userProd?.jobtitle}</UserBoxLabel>
           </UserBoxText>
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />

@@ -6,14 +6,14 @@ import { useEffect, useState } from 'react'
 import { Roles } from '../interfaces/roles.inteface'
 
 const SelectRoles = ({ ...props }: SelectProps) => {
-  const { roleId } = useAppSelector((state) => state.auth)
+  const { profile } = useAppSelector((state) => state.auth)
   const [roles, setRoles] = useState<Roles[] | undefined>([])
   const { data } = useGetRolesQuery()
 
   useEffect(() => {
-    setRoles(data?.data?.filter((rol) => rol?.id !== 4))
-    if (roleId === 4) {
-      setRoles(data?.data?.filter((rol) => rol?.id !== 1 && rol?.id !== 3))
+    setRoles(data?.data)
+    if (profile?.role?.id === 2 || profile?.role?.id === 3) {
+      setRoles(data?.data?.filter((rol) => rol?.id !== 1))
     }
   }, [data])
 

@@ -10,7 +10,7 @@ const PrincipalWrapper = styled('div')(() => ({
 
 const PaperWrapper = styled('div')(() => ({
   width: '100%',
-  height: '100vh',
+  height: '100%',
   paddingLeft: 15,
   paddingRight: 15,
   paddingTop: 10
@@ -21,7 +21,7 @@ const BodyLayout = () => {
   return (
     <PrincipalWrapper>
       <PaperWrapper>
-        <Card sx={{ height: '100%', px: 4, py: 1 }}>
+        <Card sx={{ minHeight: '100%', px: 4, py: 1 }}>
           <CardContent>
             <Header />
             <Divider />

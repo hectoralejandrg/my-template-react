@@ -10,7 +10,6 @@ export interface Role {
   id: number
   name: string
 }
-
 export interface Users {
   id: number
   name: string
@@ -23,9 +22,12 @@ export interface Users {
   updated_at: string
   deleted_at: null
   role: Role
-  company: Company
+  company?: Company
 }
 
 export interface UsersResponse {
-  data: Users[]
+  users: Users[]
+  total: number
+  page: number
+  lastpage: number
 }

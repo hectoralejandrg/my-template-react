@@ -1,18 +1,28 @@
-import { SelectProps } from '@mui/material'
+import { SelectProps, Skeleton } from '@mui/material'
 import SelectGeneric from '../../shared/SelectGeneric'
 import { useGetCompaniesQuery } from '../slice/usersApiSlice'
+import { Suspense } from 'react'
 
-const SelectCompanies = ({ ...props }: SelectProps) => {
+interface Props {
+  helperText?: string | false
+}
+
+type CustomProps = Props & SelectProps
+
+const SelectCompanies = ({ helperText, ...props }: CustomProps) => {
   const { data } = useGetCompaniesQuery()
   return (
-    <SelectGeneric
-      data={data}
-      inputLabel="Compañía"
-      keyValue={'id'}
-      keyId={'id'}
-      keyName={'name'}
-      {...props}
-    />
+    <Suspense fallback={<Skeleton variant="rectangular" width={210} height={60} />}>
+      <SelectGeneric
+        data={data?.companies}
+        inputLabel="Compañía"
+        keyValue={'id'}
+        keyId={'id'}
+        keyName={'name'}
+        helperText={helperText}
+        {...props}
+      />
+    </Suspense>
   )
 }
 
