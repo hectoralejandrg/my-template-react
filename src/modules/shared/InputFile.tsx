@@ -18,7 +18,7 @@ const Input = styled('input')({
 interface CustomProps {
   error?: string | string[] | FormikErrors<any> | FormikErrors<any>[]
   title: string
-  files?: File[]
+  files?: { fileName: string; base64String: string }[]
   setFieldValue: (
     field: string,
     value: any,
@@ -38,6 +38,7 @@ const InputFile = ({
   setFieldValue,
   ...props
 }: InputFileProps) => {
+  console.log('files', files)
   const handleDelete = (index: number) => {
     const newFiles = files?.filter((_, idx) => index !== idx)
     setFieldValue(props.id!, newFiles)
@@ -71,8 +72,8 @@ const InputFile = ({
         </IconButton>
       </InputLabel>
       <Grid container gap={1} mt={1}>
-        {files?.map(({ name }, index) => (
-          <Chip key={name} label={name} onDelete={() => handleDelete(index)} />
+        {files?.map(({ fileName }, index) => (
+          <Chip key={`${fileName}-${index}`} label={fileName} onDelete={() => handleDelete(index)} />
         ))}
       </Grid>
       {error && (

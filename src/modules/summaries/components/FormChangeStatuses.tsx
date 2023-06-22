@@ -17,7 +17,6 @@ interface Props {
 }
 
 const FormChangeStatuses = ({ selected }: Props) => {
-  console.log('form selecte', selected)
   const [changeStatuses, { isLoading }] = useChangeStatusesSummariesMutation()
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
     useFormik<ValuesFormik>({

@@ -8,20 +8,13 @@ import {
   TableCell,
   tableCellClasses,
   TableContainer,
-  TablePagination,
   TableRow
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import EnhancedTableHead from '../../shared/Table/EnhancedTableHead'
-import EnhancedTableToolbar from '../../shared/Table/EnhancedTableToolbar'
-import {
-  Deliveries,
-  ObjectDeliveries
-} from '../interfaces/deliveries.interfaces'
-
-interface Props {
-  data?: ObjectDeliveries
-}
+import TableHeadDeliveries from './TableHeadDeliveries'
+import TableToolbarDeliveries from './TableToolbarDeliveries'
+import { DeliveriesResponse } from '../interfaces/deliveries.interfaces'
+import TableRowsLoader from '../../shared/Table/TableRowsLoader'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -81,13 +74,13 @@ const headCell: HeadCell[] = [
     disablePadding: false,
     label: 'Comuna',
     align: 'left'
-  },
-  {
-    id: 'craetedAt',
-    disablePadding: false,
-    label: 'Fecha de creacion',
-    align: 'left'
   }
+  // {
+  //   id: 'craetedAt',
+  //   disablePadding: false,
+  //   label: 'Fecha de creacion',
+  //   align: 'left'
+  // }
 ]
 
 export interface Pagination {
@@ -96,24 +89,35 @@ export interface Pagination {
   sort?: string
 }
 
-const TableDeliveries = ({ data }: Props) => {
-  const [selected, setSelected] = useState<readonly string[]>([])
-  const [rows, setRows] = useState<Deliveries[]>(data?.data || [])
+interface Props {
+  data?: DeliveriesResponse[]
+  handleModalUpdate: () => void
+  setSelected: React.Dispatch<React.SetStateAction<readonly string[]>>
+  selected: readonly string[]
+  isFetching: boolean
+}
+
+const TableDeliveries = ({
+  data,
+  selected,
+  handleModalUpdate,
+  setSelected,
+  isFetching
+}: Props) => {
+  const [rows, setRows] = useState<DeliveriesResponse[]>(data || [])
 
   console.log('selected', selected)
   //   const [page, setPage] = useState(0)
   //   const [dense, setDense] = useState(false)
   //   const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [pagination, setPagination] = useState<Pagination>({
-    page: 0,
-    limit: 20
-  })
-
-  console.log('pagination', pagination)
+  // const [pagination, setPagination] = useState<Pagination>({
+  //   page: 0,
+  //   limit: 20
+  // })
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.imported_id)
+      const newSelected = rows.map((n) => n.id.toString())
       setSelected(newSelected)
       return
     }
@@ -143,7 +147,7 @@ const TableDeliveries = ({ data }: Props) => {
   const isSelected = (id: string) => selected.indexOf(id) !== -1
 
   useEffect(() => {
-    if (data) setRows(data.data)
+    if (data) setRows(data)
   }, [data])
 
   //   const emptyRows =
@@ -151,72 +155,80 @@ const TableDeliveries = ({ data }: Props) => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <TableToolbarDeliveries numSelected={selected.length} handleModal={handleModalUpdate}/>
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="medium"
           >
-            <EnhancedTableHead
+            <TableHeadDeliveries
               headCells={headCell}
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
               rowCount={rows.length}
             />
             <TableBody>
-              {rows.map((row, index) => {
-                const isItemSelected = isSelected(row?.imported_id)
-                const labelId = `enhanced-table-checkbox-${index}`
+              {isFetching ? (
+                <TableRowsLoader
+                  // rowsNum={pagination.limit}
+                  rowsNum={10}
+                  headNum={headCell.length}
+                />
+              ) : (
+                rows.map((row, index) => {
+                  const isItemSelected = isSelected(row?.imported_id)
+                  const labelId = `enhanced-table-checkbox-${index}`
 
-                return (
-                  <StyledTableRow
-                    hover
-                    onClick={(event) => handleClick(event, row?.imported_id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row?.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <StyledTableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
-                        sx={{
-                          '&.Mui-checked': {
-                            color: '#F4BB43'
-                          }
-                        }}
-                      />
-                    </StyledTableCell>
-                    <StyledTableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
+                  return (
+                    <StyledTableRow
+                      hover
+                      onClick={(event) => handleClick(event, row?.imported_id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row?.id}
+                      selected={isItemSelected}
+                      sx={{ cursor: 'pointer' }}
                     >
-                      {row?.imported_id}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.tracking_number}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.status}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.destination?.level2}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.ecommerce_id}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                )
-              })}
+                      <StyledTableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                          sx={{
+                            '&.Mui-checked': {
+                              color: '#F4BB43'
+                            }
+                          }}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row?.imported_id}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.tracking_number}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.status?.name}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.destination?.level2}
+                      </StyledTableCell>
+                      {/* <StyledTableCell align="left">
+                        {row?.ecommerce_id}
+                      </StyledTableCell> */}
+                    </StyledTableRow>
+                  )
+                })
+              )}
               {/* {emptyRows > 0 && (
               <TableRow
                 style={{
@@ -229,7 +241,7 @@ const TableDeliveries = ({ data }: Props) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+        {/* <TablePagination
           component="div"
           rowsPerPageOptions={[20, 30, 40, 50]}
           count={data?.lastpage ?? 0}
@@ -241,7 +253,7 @@ const TableDeliveries = ({ data }: Props) => {
           onRowsPerPageChange={(e) => {
             setPagination({ page: 0, limit: parseInt(e.target.value) })
           }}
-        />
+        /> */}
       </Paper>
     </Box>
   )

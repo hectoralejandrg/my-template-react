@@ -3,31 +3,36 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
 import ContentPasteIcon from '@mui/icons-material/ContentPaste'
 import PersonIcon from '@mui/icons-material/Person'
 
-interface MenuItems {
+export interface MenuItems {
   link: string
   name: string
   icon: any
+  permissions: number[]
 }
 
 export const menuItems: MenuItems[] = [
   {
     link: '/tracking',
     name: 'Actualizar tracking',
-    icon: AddLocationAltOutlinedIcon
+    icon: AddLocationAltOutlinedIcon,
+    permissions: [1, 2, 3]
   },
   {
     link: '/deliveries',
     name: 'Listado de envíos',
-    icon: FormatListBulletedIcon
+    icon: FormatListBulletedIcon,
+    permissions: [1, 2, 3]
   },
   {
     link: '/summaries',
     name: 'Manifiestos',
-    icon: ContentPasteIcon
+    icon: ContentPasteIcon,
+    permissions: [1, 2, 3]
   },
   {
     link: '/users',
     name: 'Usuarios',
-    icon: PersonIcon
+    icon: PersonIcon,
+    permissions: [1, 2]
   }
 ]

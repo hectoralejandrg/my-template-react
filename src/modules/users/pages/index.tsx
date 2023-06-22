@@ -10,6 +10,7 @@ import { Pagination } from '../../deliveries/components/TableDeliveries'
 import ComponentRecovery from '../components/ComponentRecovery'
 import { Users } from '../interfaces/users.interface'
 import FormUpdateUser from '../components/FormUpdateUser'
+import { useAppSelector } from '../../../store/useRedux'
 
 export type DataUsers = {
   id: string
@@ -21,6 +22,7 @@ export type DataUsers = {
 }
 
 const PageUsers = () => {
+  const { profile } = useAppSelector((state) => state.auth)
   const [open, setOpen] = useState(false)
   const [edit, setEdit] = useState(false)
   const [openRecovery, setOpenRecovery] = useState(false)
@@ -43,7 +45,7 @@ const PageUsers = () => {
     setEdit((prev) => !prev)
   }
 
-  const { data, isFetching } = useGetUsersQuery({ ...pagination })
+  const { data, isFetching } = useGetUsersQuery({ ...pagination, company: profile?.companyId })
   return (
     <ScreenWrapper>
       <Box sx={{ marginBottom: 3 }}>

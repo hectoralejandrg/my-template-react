@@ -10,7 +10,7 @@ const apiUsersTags = globalApi.enhanceEndpoints({
 
 export const usersApiSlice = apiUsersTags.injectEndpoints({
   endpoints: (builder) => ({
-    getUsers: builder.query<UsersResponse, {page: number, limit?: number, sort?: string}>({
+    getUsers: builder.query<UsersResponse, {page: number, limit?: number, sort?: string, company?: number}>({
       queryFn: async (params) => {
         try {
           const { data } = await mainApi('users', { params: { ...params, page: params.page + 1 } })

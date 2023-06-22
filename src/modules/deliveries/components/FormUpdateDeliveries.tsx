@@ -1,31 +1,28 @@
-import { Box, Grid } from '@mui/material'
+import { Box, DialogContent, Grid } from '@mui/material'
 import { useFormik } from 'formik'
-import { ButtonSubmit } from '../../shared/ButtonSubmit'
-import { useUpdateTrackingMutation } from '../slice/trackingApiSlice'
-import { useAppSelector } from '../../../store/useRedux'
-import StatusAutocomplete from './StatusAutocomplete'
-import { Status } from '../interfaces/statusses.interface'
+import { Status } from '../../tracking/interfaces/statusses.interface'
+import StatusAutocomplete from '../../tracking/components/StatusAutocomplete'
 import CustomInput from '../../shared/CustomInput'
-import { updateTrackingSchema } from '../utils/updateTrackingSchema'
-import InputFile from '../../shared/InputFile'
-import { onSelectFiles } from '../../shared/fileToBase64'
+import { ButtonSubmit } from '../../shared/ButtonSubmit'
+import { useUpdateStatusDeliveriesMutation } from '../slice/deliveriesApiSlice'
+import { useAppSelector } from '../../../store/useRedux'
 
-interface Files64 {
-  fileName: string
-  base64String: string
-}
 interface ValuesFormik {
   reference: string
   status: Status | null
   comment: string
   name?: string
   rut?: string
-  imagesFile?: Files64[]
 }
 
-const FormUpdateTracking = () => {
+interface Props {
+  selected: readonly string[]
+  handleClose: () => void
+}
+
+const FormUpdateDeliveries = ({ selected, handleClose }: Props) => {
   const { profile } = useAppSelector((state) => state.auth)
-  const [updateTracking, { isLoading }] = useUpdateTrackingMutation()
+  const [changeStatuses, { isLoading }] = useUpdateStatusDeliveriesMutation()
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
     useFormik<ValuesFormik>({
       initialValues: {
@@ -33,40 +30,24 @@ const FormUpdateTracking = () => {
         status: null,
         comment: ''
       },
-      validationSchema: updateTrackingSchema,
-      onSubmit: async (
-        { reference, status, comment, name, rut, imagesFile },
-        { resetForm }
-      ) => {
-        await updateTracking({
-          imported_id: reference,
+      //   validationSchema: loginSchema,
+      onSubmit: async ({ name, status, comment, rut }) => {
+        await changeStatuses({
+          imported_ids: selected?.map((id) => id),
+          status_id: status?.id,
           user_id: profile?.user_entity_id,
-          status: status?.id,
           evidence: {
             comment,
             name,
-            rut,
-            images: imagesFile?.map((f) => f.base64String)
+            rut
           }
         })
           .unwrap()
-          .then(() => resetForm())
+          .then(() => handleClose())
       }
     })
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file: File[] = []
-    if (e.target.value.length > 0) {
-      for (const f of e.target.files!) {
-        file.push(f)
-      }
-      const files: Files64[] = await onSelectFiles(e)
-      setFieldValue('imagesFile', files)
-    }
-  }
-
   return (
-    <Grid container item sx={{ width: '100%' }} padding={{ xs: 0, sm: 5 }}>
+    <DialogContent>
       <Box
         component="form"
         noValidate
@@ -74,17 +55,6 @@ const FormUpdateTracking = () => {
         sx={{ width: '100%' }}
       >
         <Grid container gap={3}>
-          <CustomInput
-            inputLabel="N° de referencia"
-            id="reference"
-            name="reference"
-            type="text"
-            size="small"
-            value={values.reference}
-            onChange={handleChange}
-            error={touched.reference && Boolean(errors.reference)}
-            helperText={touched.reference && errors.reference}
-          />
           <StatusAutocomplete
             inputLabel="Estado"
             value={values?.status}
@@ -131,23 +101,15 @@ const FormUpdateTracking = () => {
             rows={3}
             multiline
           />
-          <InputFile
-            title="Adjuntar prueba"
-            id="imagesFile"
-            accept=".jpg,.jpeg,.png"
-            files={values.imagesFile}
-            setFieldValue={setFieldValue}
-            onChange={(e) => handleFile(e)}
-          />
           <Grid container justifyContent="flex-end">
             <ButtonSubmit isLoading={isLoading} icon="nope" sx={{ px: 10 }}>
-              Actualizar
+              Guardar
             </ButtonSubmit>
           </Grid>
         </Grid>
       </Box>
-    </Grid>
+    </DialogContent>
   )
 }
 
-export default FormUpdateTracking
+export default FormUpdateDeliveries

@@ -6,13 +6,16 @@ import {
   ListItemButton,
   useTheme
 } from '@mui/material'
-import { menuItems } from '../../../routes/menuItems'
+import { MenuItems, menuItems } from '../../../routes/menuItems'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../../../store/useRedux'
+import { useAppDispatch, useAppSelector } from '../../../store/useRedux'
 import { setPageName } from '../../../modules/auth/slice/authSlice'
 import { usePageName } from '../../hooks/usePageName'
+import { useEffect, useState } from 'react'
 
 const ItemList = ({ open }: { open: boolean }) => {
+  const { profile } = useAppSelector((state) => state?.auth)
+  const [itemList, setItemList] = useState<MenuItems[]>([])
   const dispatch = useAppDispatch()
   const { pageName } = usePageName()
   const theme = useTheme()
@@ -23,9 +26,17 @@ const ItemList = ({ open }: { open: boolean }) => {
     navigate(link)
   }
 
+  useEffect(() => {
+    if (profile) {
+      setItemList(
+        menuItems?.filter((menu) => menu.permissions.includes(profile?.role?.id))
+      )
+    }
+  }, [profile])
+
   return (
     <List>
-      {menuItems.map(({ icon: Icon, name, link }, index) => (
+      {itemList.map(({ icon: Icon, name, link }, index) => (
         <ListItem
           key={`${name}-${index}`}
           disablePadding

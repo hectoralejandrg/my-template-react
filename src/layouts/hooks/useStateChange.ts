@@ -14,7 +14,6 @@ export const useStateChange = () => {
   const { token } = useAppSelector((state) => state.auth)
   useEffect(() => {
     const unsubuscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log('cambia user')
       if (currentUser) {
         dispatch(setUser(currentUser))
         console.log('newtoken', token, currentUser)
@@ -23,11 +22,14 @@ export const useStateChange = () => {
           localStorage.setItem('token', token)
         })
         currentUser.getIdTokenResult().then((claims) => {
+          console.log('claims', claims)
           dispatch(
             setProfile({
               role: claims.claims.role,
               companyId: claims.claims.company,
-              email: claims.claims.email
+              email: claims.claims.email,
+              user_entity_id: claims.claims.user_entity_id,
+              user_id: claims.claims.user_id
             })
           )
         })

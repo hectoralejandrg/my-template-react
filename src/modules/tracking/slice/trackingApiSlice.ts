@@ -21,8 +21,31 @@ export const trackingApiSlice = apiTrackingTags.injectEndpoints({
           }
         }
       }
+    }),
+    updateTracking: builder.mutation<
+      void,
+      {
+        imported_id: string
+        status?: number
+        user_id?: number
+        evidence?: { comment?: string; name?: string; rut?: string; images?: string[] }
+      }
+    >({
+      queryFn: async (params) => {
+        try {
+          const { data } = await mainApi.put('delivery', {
+            ...params
+          })
+          return { data }
+        } catch (error: any) {
+          return {
+            error
+          }
+        }
+      }
     })
   })
 })
 
-export const { useGetStatusesQuery } = trackingApiSlice
+export const { useGetStatusesQuery, useUpdateTrackingMutation } =
+  trackingApiSlice

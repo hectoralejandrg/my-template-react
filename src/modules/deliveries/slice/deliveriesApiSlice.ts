@@ -1,13 +1,6 @@
 import { globalApi } from '../../../store/globalApi'
 import mainApi from '../../../utils/AxiosService'
-import { ObjectDeliveries } from '../interfaces/deliveries.interfaces'
-
-export interface Params {
-  id: number
-  page: string
-  sort: string
-  terminal: boolean
-}
+import { DeliveriesResponse } from '../interfaces/deliveries.interfaces'
 
 const apiDeliveriesTags = globalApi.enhanceEndpoints({
   addTagTypes: []
@@ -15,10 +8,32 @@ const apiDeliveriesTags = globalApi.enhanceEndpoints({
 
 export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
   endpoints: (builder) => ({
-    getDeliveries: builder.query<ObjectDeliveries, Params | void>({
+    getDeliveries: builder.query<DeliveriesResponse[], void>({
       queryFn: async (params) => {
         try {
           const { data } = await mainApi('deliveries', { params })
+          return { data }
+        } catch (error: any) {
+          return {
+            error
+          }
+        }
+      }
+    }),
+    updateStatusDeliveries: builder.mutation<
+      void,
+      {
+        imported_ids: string[]
+        status_id?: number
+        user_id?: number
+        evidence?: { comment?: string; name?: string; rut?: string }
+      }
+    >({
+      queryFn: async (params) => {
+        try {
+          const { data } = await mainApi.put('deliveries', {
+            ...params
+          })
           return { data }
         } catch (error: any) {
           return {
@@ -30,4 +45,5 @@ export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
   })
 })
 
-export const { useGetDeliveriesQuery } = deliveriesApiSlice
+export const { useGetDeliveriesQuery, useUpdateStatusDeliveriesMutation } =
+  deliveriesApiSlice

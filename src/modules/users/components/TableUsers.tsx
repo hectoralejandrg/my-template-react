@@ -218,8 +218,8 @@ const TableUsers = ({
             onRowsPerPageChange={(e) =>
               setPagination({ page: 0, limit: parseInt(e.target.value) })
             }
-            labelRowsPerPage={'Items por página'}
-            labelDisplayedRows={({ from, to, count }) => `Items ${from}-${to} de un total de ${count} items`}
+            labelRowsPerPage={'Filas por página'}
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
           />
         )}
       </Paper>

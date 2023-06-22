@@ -1,39 +1,49 @@
-import { Button, FormControl, Grid, InputLabel, TextField } from '@mui/material'
 import TableDeliveries from '../components/TableDeliveries'
-import SearchIcon from '@mui/icons-material/Search'
-import RestartAltIcon from '@mui/icons-material/RestartAlt'
-import { useFormik } from 'formik'
-import StatusInput from '../../shared/StatusInput'
+// import SearchIcon from '@mui/icons-material/Search'
+// import RestartAltIcon from '@mui/icons-material/RestartAlt'
+// import { useFormik } from 'formik'
+// import StatusInput from '../../shared/StatusInput'
 import { useGetDeliveriesQuery } from '../slice/deliveriesApiSlice'
+import ScreenWrapper from '../../shared/ScreenWrapper'
+import { useState } from 'react'
+import ModalEnhanced from '../../shared/ModalEnhanced'
+import FormUpdateDeliveries from '../components/FormUpdateDeliveries'
 
-const styleLabel = {
-  'label + &': {
-    marginTop: 3
-  }
-}
-interface ValuesFormik {
-  reference: string
-  status: string
-  created_at: string
-}
+// const styleLabel = {
+//   'label + &': {
+//     marginTop: 3
+//   }
+// }
+// interface ValuesFormik {
+//   reference: string
+//   status: string
+//   created_at: string
+// }
 
 const DeliveriesPage = () => {
-  const { data } = useGetDeliveriesQuery()
+  const [edit, setEdit] = useState(false)
+  const { data, isFetching } = useGetDeliveriesQuery()
+  const [selected, setSelected] = useState<readonly string[]>([])
   console.log(data)
-  const { setFieldValue, values } = useFormik<ValuesFormik>({
-    initialValues: {
-      reference: '',
-      status: '',
-      created_at: ''
-    },
-    //   validationSchema: loginSchema,
-    onSubmit: ({ reference, status }) => {
-      console.log(reference, status)
-    }
-  })
+  // const { setFieldValue, values } = useFormik<ValuesFormik>({
+  //   initialValues: {
+  //     reference: '',
+  //     status: '',
+  //     created_at: ''
+  //   },
+  //   //   validationSchema: loginSchema,
+  //   onSubmit: ({ reference, status }) => {
+  //     console.log(reference, status)
+  //   }
+  // })
+
+  const handleChangeModalUpdate = () => {
+    setEdit((prev) => !prev)
+  }
+
   return (
-    <>
-      <Grid container my={3} gap={1}>
+    <ScreenWrapper>
+      {/* <Grid container my={3} gap={1}>
         <Grid item lg={3}>
           <FormControl variant="standard" fullWidth>
             <InputLabel htmlFor="status" shrink sx={{ fontSize: 20 }}>
@@ -99,9 +109,22 @@ const DeliveriesPage = () => {
             <RestartAltIcon />
           </Button>
         </Grid>
-      </Grid>
-      <TableDeliveries data={data} />
-    </>
+      </Grid> */}
+      <TableDeliveries
+        data={data}
+        selected={selected}
+        setSelected={setSelected}
+        handleModalUpdate={handleChangeModalUpdate}
+        isFetching={isFetching}
+      />
+      <ModalEnhanced
+        title="Actualizar estados de envios"
+        open={edit}
+        handleClose={handleChangeModalUpdate}
+      >
+        <FormUpdateDeliveries handleClose={handleChangeModalUpdate} selected={selected}/>
+      </ModalEnhanced>
+    </ScreenWrapper>
   )
 }
 

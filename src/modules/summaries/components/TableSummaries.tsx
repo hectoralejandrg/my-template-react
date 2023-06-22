@@ -88,8 +88,6 @@ const headCell: HeadCell[] = [
 const TableSummaries = ({ data, pagination, selected, setPagination, handleModal, setSelected }: Props) => {
   const [rows, setRows] = useState<Summaries[]>(data?.data || [])
 
-  console.log('selected', selected)
-
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.id.toString())
