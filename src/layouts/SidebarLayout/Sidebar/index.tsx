@@ -7,6 +7,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import MenuIcon from '@mui/icons-material/Menu'
 import BodyLayout from '../Body'
 import ItemList from './ItemList'
+import logo from '../../../assets/logo_enviatrack.png'
 
 export const drawerWidth = 240
 
@@ -76,13 +77,21 @@ const SidebarLayout = () => {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader open={open}>
           {open ? (
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
+            <>
+              <Box
+                component="img"
+                src={logo}
+                alt="Logo"
+                height={{ xs: '33px', sm: '33px', lg: '33px' }}
+              />
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === 'rtl' ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            </>
           ) : (
             <IconButton
               disableRipple

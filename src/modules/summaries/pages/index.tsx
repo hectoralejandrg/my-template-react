@@ -43,7 +43,7 @@ const SummariesPage = () => {
   const handleChangeModal = () => {
     setOpen(prev => !prev)
   }
-  const { data } = useGetSummariesQuery({ ...pagination, ...formikValues })
+  const { data, isFetching } = useGetSummariesQuery({ ...pagination, ...formikValues })
 
   const { handleSubmit, values, handleChange, setFieldValue, resetForm } =
     useFormik<ValuesFormik>({
@@ -178,6 +178,7 @@ const SummariesPage = () => {
         handleModal={handleChangeModal}
         selected={selected}
         setSelected={setSelected}
+        isFetching={isFetching}
       />
       <ModalSummaries open={open} handleClose={handleChangeModal}>
         <FormChangeStatuses selected={selected}/>

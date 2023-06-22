@@ -12,18 +12,16 @@ import {
   TableRow
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import EnhancedTableHead, { HeadCell } from '../../shared/Table/EnhancedTableHead'
+import EnhancedTableHead, {
+  HeadCell
+} from '../../shared/Table/EnhancedTableHead'
 import EnhancedTableToolbar from '../../shared/Table/EnhancedTableToolbar'
-import { Pagination, Summaries, SummariesResponse } from '../interfaces/summaries.interface'
-
-interface Props {
-  data?: SummariesResponse
-  pagination: Pagination
-  selected: readonly string[]
-  setPagination: React.Dispatch<React.SetStateAction<Pagination>>
-  handleModal?: () => void
-  setSelected: React.Dispatch<React.SetStateAction<readonly string[]>>
-}
+import {
+  Pagination,
+  Summaries,
+  SummariesResponse
+} from '../interfaces/summaries.interface'
+import TableRowsLoader from '../../shared/Table/TableRowsLoader'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -85,7 +83,25 @@ const headCell: HeadCell[] = [
   }
 ]
 
-const TableSummaries = ({ data, pagination, selected, setPagination, handleModal, setSelected }: Props) => {
+interface Props {
+  data?: SummariesResponse
+  pagination: Pagination
+  selected: readonly string[]
+  setPagination: React.Dispatch<React.SetStateAction<Pagination>>
+  handleModal?: () => void
+  setSelected: React.Dispatch<React.SetStateAction<readonly string[]>>
+  isFetching?: boolean
+}
+
+const TableSummaries = ({
+  data,
+  pagination,
+  selected,
+  isFetching,
+  setPagination,
+  handleModal,
+  setSelected
+}: Props) => {
   const [rows, setRows] = useState<Summaries[]>(data?.data || [])
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,7 +144,10 @@ const TableSummaries = ({ data, pagination, selected, setPagination, handleModal
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
-        <EnhancedTableToolbar numSelected={selected.length} handleModal={handleModal}/>
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          handleModal={handleModal}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -142,58 +161,67 @@ const TableSummaries = ({ data, pagination, selected, setPagination, handleModal
               rowCount={rows.length}
             />
             <TableBody>
-              {rows.map((row, index) => {
-                const isItemSelected = isSelected(row?.id.toString())
-                const labelId = `enhanced-table-checkbox-${index}`
+              {isFetching ? (
+                <TableRowsLoader
+                  rowsNum={pagination.limit}
+                  headNum={headCell.length + 1}
+                />
+              ) : (
+                rows.map((row, index) => {
+                  const isItemSelected = isSelected(row?.id.toString())
+                  const labelId = `enhanced-table-checkbox-${index}`
 
-                return (
-                  <StyledTableRow
-                    hover
-                    onClick={(event) => handleClick(event, row?.id.toString())}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row?.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <StyledTableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
-                        sx={{
-                          '&.Mui-checked': {
-                            color: '#F4BB43'
-                          }
-                        }}
-                      />
-                    </StyledTableCell>
-                    <StyledTableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
+                  return (
+                    <StyledTableRow
+                      hover
+                      onClick={(event) =>
+                        handleClick(event, row?.id.toString())
+                      }
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row?.id}
+                      selected={isItemSelected}
+                      sx={{ cursor: 'pointer' }}
                     >
-                      {row?.id}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.carrier?.name}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.evidence}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.truck_id}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.created_at}
-                    </StyledTableCell>
-                  </StyledTableRow>
-                )
-              })}
+                      <StyledTableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId
+                          }}
+                          sx={{
+                            '&.Mui-checked': {
+                              color: '#F4BB43'
+                            }
+                          }}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row?.id}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.carrier?.name}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.evidence}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.truck_id}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.created_at}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  )
+                })
+              )}
               {/* {emptyRows > 0 && (
                 <TableRow
                   style={{

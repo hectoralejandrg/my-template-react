@@ -2,9 +2,9 @@ import {
   Button,
   // alpha,
   FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
+  // FormControlLabel,
+  // Radio,
+  // RadioGroup,
   Toolbar,
   Tooltip
 } from '@mui/material'
@@ -52,7 +52,7 @@ const EnhancedTableToolbar = ({
         </Tooltip>
       ) : (
         <FormControl>
-          <RadioGroup
+          {/* <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
@@ -67,7 +67,7 @@ const EnhancedTableToolbar = ({
               control={<Radio />}
               label="Archivados"
             />
-          </RadioGroup>
+          </RadioGroup> */}
         </FormControl>
       )}
     </Toolbar>

@@ -117,7 +117,7 @@ const TableDeliveries = ({
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id.toString())
+      const newSelected = rows.map((n) => n.imported_id.toString())
       setSelected(newSelected)
       return
     }
@@ -173,7 +173,7 @@ const TableDeliveries = ({
                 <TableRowsLoader
                   // rowsNum={pagination.limit}
                   rowsNum={10}
-                  headNum={headCell.length}
+                  headNum={headCell.length + 1}
                 />
               ) : (
                 rows.map((row, index) => {
