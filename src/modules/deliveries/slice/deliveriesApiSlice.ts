@@ -3,7 +3,7 @@ import mainApi from '../../../utils/AxiosService'
 import { DeliveriesResponse } from '../interfaces/deliveries.interfaces'
 
 const apiDeliveriesTags = globalApi.enhanceEndpoints({
-  addTagTypes: []
+  addTagTypes: ['Deliveries']
 })
 
 export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
@@ -18,7 +18,9 @@ export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
             error
           }
         }
-      }
+      },
+      providesTags: (data) =>
+        data ? [...data?.map(({ id }) => ({ type: 'Deliveries' as const, id })), 'Deliveries'] : ['Deliveries']
     }),
     updateStatusDeliveries: builder.mutation<
       void,
@@ -40,7 +42,8 @@ export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
             error
           }
         }
-      }
+      },
+      invalidatesTags: ['Deliveries']
     })
   })
 })

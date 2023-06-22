@@ -7,6 +7,7 @@ import {
   useResetPasswordMutation
 } from '../../slice/authApiSlice'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { resetPasswordSchema } from '../utils/resetPasswordSchema'
 
 const FormResetPassword = () => {
   const [searchParams] = useSearchParams()
@@ -18,7 +19,7 @@ const FormResetPassword = () => {
       newPassword: '',
       repeatPassword: ''
     },
-    // validationSchema: resetPasswordSchema,
+    validationSchema: resetPasswordSchema,
     onSubmit: async ({ newPassword }) => {
       console.log(newPassword)
       await resetPassword({ uid: data?.id, newPassword })

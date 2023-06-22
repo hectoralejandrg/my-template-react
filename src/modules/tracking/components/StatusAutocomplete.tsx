@@ -4,6 +4,7 @@ import {
   Autocomplete,
   CircularProgress,
   InputLabel,
+  Skeleton,
   TextField
 } from '@mui/material'
 import { Status } from '../interfaces/statusses.interface'
@@ -67,7 +68,10 @@ const StatusAutocomplete = ({
       )}
     />
   ) : (
-    <></>
+    <>
+      <Skeleton variant="text" sx={{ fontSize: '1rem', marginBottom: -3 }} width={200}/>
+      <Skeleton variant="rounded" width={'100%'} height={40} />
+    </>
   )
 }
 
