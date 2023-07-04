@@ -8,7 +8,6 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import CustomInput from '../../shared/CustomInput'
 import StatusAutocomplete from '../../tracking/components/StatusAutocomplete'
 import { Status } from '../interfaces/deliveries.interfaces'
-import es from 'dayjs/locale/es'
 const styleLabel = {
   'label + &': {
     marginTop: 3
@@ -61,7 +60,7 @@ const FiltersTable = ({ getValuesFilter }: Props) => {
             <InputLabel shrink sx={{ fontSize: 20 }}>
               Desde
             </InputLabel>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={es}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 value={values.start_date}
                 onChange={(newValue) =>
@@ -82,7 +81,7 @@ const FiltersTable = ({ getValuesFilter }: Props) => {
             <InputLabel shrink sx={{ fontSize: 20 }}>
               Hasta
             </InputLabel>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={es}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 value={values.end_date}
                 onChange={(newValue) =>

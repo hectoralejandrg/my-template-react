@@ -30,7 +30,6 @@ const FormUpdateDeliveries = ({ selected, handleClose }: Props) => {
         status: null,
         comment: ''
       },
-      //   validationSchema: loginSchema,
       onSubmit: async ({ name, status, comment, rut }) => {
         await changeStatuses({
           imported_ids: selected?.map((id) => id),
