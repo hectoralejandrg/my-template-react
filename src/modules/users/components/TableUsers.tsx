@@ -14,7 +14,6 @@ import {
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import TableHeadUsers, { HeadCell } from './TableHeadUsers'
-import { Pagination } from '../../deliveries/components/TableDeliveries'
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined'
 import VpnKeyOutlinedIcon from '@mui/icons-material/VpnKeyOutlined'
 import { Users, UsersResponse } from '../interfaces/users.interface'
@@ -95,6 +94,13 @@ const headCell: HeadCell[] = [
     align: 'center'
   }
 ]
+
+export interface Pagination {
+  page: number
+  limit: number
+  total?: number
+  sort: string
+}
 
 interface Props {
   data?: UsersResponse
@@ -216,7 +222,7 @@ const TableUsers = ({
               setPagination((prev) => ({ ...prev, page }))
             }
             onRowsPerPageChange={(e) =>
-              setPagination({ page: 0, limit: parseInt(e.target.value) })
+              setPagination((prev) => ({ ...prev, page: 0, limit: parseInt(e.target.value) }))
             }
             labelRowsPerPage={'Filas por página'}
             labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}

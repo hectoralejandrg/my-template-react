@@ -8,13 +8,18 @@ import {
   TableCell,
   tableCellClasses,
   TableContainer,
+  TablePagination,
   TableRow
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import TableHeadDeliveries from './TableHeadDeliveries'
 import TableToolbarDeliveries from './TableToolbarDeliveries'
-import { DeliveriesResponse } from '../interfaces/deliveries.interfaces'
+import {
+  Deliveries,
+  DeliveriesResponse
+} from '../interfaces/deliveries.interfaces'
 import TableRowsLoader from '../../shared/Table/TableRowsLoader'
+import dayjs from 'dayjs'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -64,37 +69,41 @@ const headCell: HeadCell[] = [
     align: 'left'
   },
   {
-    id: 'status',
-    disablePadding: false,
-    label: 'Status',
-    align: 'left'
-  },
-  {
     id: 'destination',
     disablePadding: false,
     label: 'Comuna',
     align: 'left'
+  },
+  {
+    id: 'status',
+    disablePadding: false,
+    label: 'Estado',
+    align: 'left'
+  },
+  {
+    id: 'created_at',
+    disablePadding: false,
+    label: 'Fecha de creación',
+    align: 'left'
   }
-  // {
-  //   id: 'craetedAt',
-  //   disablePadding: false,
-  //   label: 'Fecha de creacion',
-  //   align: 'left'
-  // }
 ]
 
 export interface Pagination {
   page: number
-  limit: number
-  sort?: string
+  perPage: number
+  paginate: boolean
+  sort: string
 }
 
 interface Props {
-  data?: DeliveriesResponse[]
+  data?: DeliveriesResponse
   handleModalUpdate: () => void
   setSelected: React.Dispatch<React.SetStateAction<readonly string[]>>
   selected: readonly string[]
   isFetching: boolean
+  pagination: Pagination
+  setPagination: React.Dispatch<React.SetStateAction<Pagination>>
+  getValueToolbar: (value?: string) => void
 }
 
 const TableDeliveries = ({
@@ -102,18 +111,12 @@ const TableDeliveries = ({
   selected,
   handleModalUpdate,
   setSelected,
-  isFetching
+  isFetching,
+  pagination,
+  setPagination,
+  getValueToolbar
 }: Props) => {
-  const [rows, setRows] = useState<DeliveriesResponse[]>(data || [])
-
-  console.log('selected', selected)
-  //   const [page, setPage] = useState(0)
-  //   const [dense, setDense] = useState(false)
-  //   const [rowsPerPage, setRowsPerPage] = useState(5)
-  // const [pagination, setPagination] = useState<Pagination>({
-  //   page: 0,
-  //   limit: 20
-  // })
+  const [rows, setRows] = useState<Deliveries[]>(data?.data || [])
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -146,8 +149,16 @@ const TableDeliveries = ({
 
   const isSelected = (id: string) => selected.indexOf(id) !== -1
 
+  const handleValueToolbar = (value: string) => {
+    if (value === 'all') getValueToolbar(undefined)
+    else getValueToolbar(value)
+  }
+
   useEffect(() => {
-    if (data) setRows(data)
+    if (data) {
+      setRows(data?.data)
+      setSelected([])
+    }
   }, [data])
 
   //   const emptyRows =
@@ -155,7 +166,11 @@ const TableDeliveries = ({
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
-        <TableToolbarDeliveries numSelected={selected.length} handleModal={handleModalUpdate}/>
+        <TableToolbarDeliveries
+          numSelected={selected.length}
+          handleModal={handleModalUpdate}
+          handleValueToolbar={handleValueToolbar}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -171,8 +186,7 @@ const TableDeliveries = ({
             <TableBody>
               {isFetching ? (
                 <TableRowsLoader
-                  // rowsNum={pagination.limit}
-                  rowsNum={10}
+                  rowsNum={pagination.perPage}
                   headNum={headCell.length + 1}
                 />
               ) : (
@@ -217,14 +231,14 @@ const TableDeliveries = ({
                         {row?.tracking_number}
                       </StyledTableCell>
                       <StyledTableCell align="left">
+                        {row?.destination?.level2}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
                         {row?.status?.name}
                       </StyledTableCell>
                       <StyledTableCell align="left">
-                        {row?.destination?.level2}
+                      {dayjs(row?.created_at).format('DD-MM-YYYY HH:mm')}
                       </StyledTableCell>
-                      {/* <StyledTableCell align="left">
-                        {row?.ecommerce_id}
-                      </StyledTableCell> */}
                     </StyledTableRow>
                   )
                 })
@@ -241,19 +255,27 @@ const TableDeliveries = ({
             </TableBody>
           </Table>
         </TableContainer>
-        {/* <TablePagination
-          component="div"
-          rowsPerPageOptions={[20, 30, 40, 50]}
-          count={data?.lastpage ?? 0}
-          page={pagination.page}
-          rowsPerPage={pagination.limit}
-          onPageChange={(_, page) =>
-            setPagination((prev) => ({ ...prev, page }))
-          }
-          onRowsPerPageChange={(e) => {
-            setPagination({ page: 0, limit: parseInt(e.target.value) })
-          }}
-        /> */}
+        {data?.data && (
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={[10, 20, 30, 40, 50]}
+            count={data.count}
+            page={pagination.page}
+            rowsPerPage={pagination.perPage}
+            onPageChange={(_, page) =>
+              setPagination((prev) => ({ ...prev, page }))
+            }
+            onRowsPerPageChange={(e) => {
+              setPagination((prev) => ({
+                ...prev,
+                page: 0,
+                perPage: parseInt(e.target.value)
+              }))
+            }}
+            labelRowsPerPage={'Filas por página'}
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+          />
+        )}
       </Paper>
     </Box>
   )

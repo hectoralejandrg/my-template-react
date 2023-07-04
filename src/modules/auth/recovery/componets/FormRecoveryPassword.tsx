@@ -16,7 +16,6 @@ const FormRecoveryPassword = () => {
       },
       validationSchema: recoverySchema,
       onSubmit: async ({ email, token }) => {
-        console.log(email, token)
         await sendEmail({ email })
       }
     })

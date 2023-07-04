@@ -38,7 +38,6 @@ const InputFile = ({
   setFieldValue,
   ...props
 }: InputFileProps) => {
-  console.log('files', files)
   const handleDelete = (index: number) => {
     const newFiles = files?.filter((_, idx) => index !== idx)
     setFieldValue(props.id!, newFiles)

@@ -3,17 +3,23 @@ import { useGetStatusesQuery } from '../slice/trackingApiSlice'
 import {
   Autocomplete,
   CircularProgress,
+  FormControl,
   InputLabel,
-  Skeleton,
   TextField
 } from '@mui/material'
 import { Status } from '../interfaces/statusses.interface'
 
+const styleLabel = {
+  'label + &': {
+    marginTop: 3
+  }
+}
+
 interface CustomProps {
   inputLabel: string
-  value: Status | null
-  error: boolean | undefined
-  helperText: string | false | undefined
+  value?: Status | null
+  error?: boolean | undefined
+  helperText?: string | false | undefined
   handleChange: (value: Status | null) => void
 }
 
@@ -25,28 +31,19 @@ const StatusAutocomplete = ({
   handleChange
 }: CustomProps) => {
   const { data, isLoading } = useGetStatusesQuery()
-  return data ? (
-    <Autocomplete
-      fullWidth
-      value={value}
-      onChange={(_, newValue) => handleChange(newValue)}
-      //   sx={{ width: 300 }}
-      //   open={open}
-      //   onOpen={() => {
-      //     setOpen(true)
-      //   }}
-      //   onClose={() => {
-      //     setOpen(false)
-      //   }}
-      //   isOptionEqualToValue={(option, value) => option.title === value.title}
-      getOptionLabel={(option) => option?.name}
-      options={data.statuses}
-      loading={isLoading}
-      renderInput={(params) => (
-        <>
-          <InputLabel shrink sx={{ fontSize: 20 }}>
-            {inputLabel}
-          </InputLabel>
+  return (
+    <FormControl variant="standard" fullWidth>
+      <InputLabel shrink sx={{ fontSize: 20 }}>
+        {inputLabel}
+      </InputLabel>
+      <Autocomplete
+        value={value}
+        sx={styleLabel}
+        onChange={(_, newValue) => handleChange(newValue)}
+        getOptionLabel={(option) => option?.name}
+        options={data?.statuses ?? []}
+        loading={isLoading}
+        renderInput={(params) => (
           <TextField
             {...params}
             InputProps={{
@@ -64,14 +61,9 @@ const StatusAutocomplete = ({
             error={error}
             helperText={helperText}
           />
-        </>
-      )}
-    />
-  ) : (
-    <>
-      <Skeleton variant="text" sx={{ fontSize: '1rem', marginBottom: -3 }} width={200}/>
-      <Skeleton variant="rounded" width={'100%'} height={40} />
-    </>
+        )}
+      />
+    </FormControl>
   )
 }
 

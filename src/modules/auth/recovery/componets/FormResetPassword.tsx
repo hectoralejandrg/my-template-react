@@ -21,7 +21,6 @@ const FormResetPassword = () => {
     },
     validationSchema: resetPasswordSchema,
     onSubmit: async ({ newPassword }) => {
-      console.log(newPassword)
       await resetPassword({ uid: data?.id, newPassword })
         .unwrap()
         .then(() => navigate('/login'))

@@ -8,7 +8,13 @@ const apiDeliveriesTags = globalApi.enhanceEndpoints({
 
 export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
   endpoints: (builder) => ({
-    getDeliveries: builder.query<DeliveriesResponse[], void>({
+    getDeliveries: builder.query<DeliveriesResponse,
+    {page: number,
+    perPage?: number,
+    sort?: string,
+    pagination?: true,
+    terminal?: string,
+    imported_id?: string}>({
       queryFn: async (params) => {
         try {
           const { data } = await mainApi('deliveries', { params })
@@ -20,7 +26,7 @@ export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
         }
       },
       providesTags: (data) =>
-        data ? [...data?.map(({ id }) => ({ type: 'Deliveries' as const, id })), 'Deliveries'] : ['Deliveries']
+        data ? [...data?.data?.map(({ id }) => ({ type: 'Deliveries' as const, id })), 'Deliveries'] : ['Deliveries']
     }),
     updateStatusDeliveries: builder.mutation<
       void,
