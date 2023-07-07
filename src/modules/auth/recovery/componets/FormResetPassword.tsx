@@ -21,7 +21,6 @@ const FormResetPassword = () => {
   const { data, isError, error } = useDecodeTokenQuery({
     token: searchParams.get('token')
   })
-  console.log('tdata', searchParams, searchParams.get('token'), error)
   const [resetPassword, { isLoading }] = useResetPasswordMutation()
   const { handleSubmit, handleChange, values, touched, errors } = useFormik({
     initialValues: {

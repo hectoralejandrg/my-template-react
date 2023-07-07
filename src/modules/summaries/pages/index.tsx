@@ -9,15 +9,15 @@ import {
 import { useFormik } from 'formik'
 import SearchIcon from '@mui/icons-material/Search'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
-import { useGetSummariesQuery } from '../slice/summariesApiSlice'
-import TableSummaries from '../components/TableSummaries'
-import { useState } from 'react'
-import { Pagination } from '../interfaces/summaries.interface'
+// import { useGetSummariesQuery } from '../slice/summariesApiSlice'
+// import TableSummaries from '../components/TableSummaries'
+// import { useState } from 'react'
+// import { Pagination } from '../interfaces/summaries.interface'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
-import ModalSummaries from '../components/ModalSummaries'
-import FormChangeStatuses from '../components/FormChangeStatuses'
+// import ModalSummaries from '../components/ModalSummaries'
+// import FormChangeStatuses from '../components/FormChangeStatuses'
 
 const styleLabel = {
   'label + &': {
@@ -33,17 +33,17 @@ interface ValuesFormik {
 }
 
 const SummariesPage = () => {
-  const [formikValues, setFormikValues] = useState<ValuesFormik>()
-  const [selected, setSelected] = useState<readonly string[]>([])
-  const [pagination, setPagination] = useState<Pagination>({
-    page: 0,
-    limit: 10
-  })
-  const [open, setOpen] = useState(false)
-  const handleChangeModal = () => {
-    setOpen(prev => !prev)
-  }
-  const { data, isFetching } = useGetSummariesQuery({ ...pagination, ...formikValues })
+  // const [formikValues, setFormikValues] = useState<ValuesFormik>()
+  // const [selected, setSelected] = useState<readonly string[]>([])
+  // const [pagination, setPagination] = useState<Pagination>({
+  //   page: 0,
+  //   limit: 10
+  // })
+  // const [open, setOpen] = useState(false)
+  // const handleChangeModal = () => {
+  //   setOpen(prev => !prev)
+  // }
+  // const { data, isFetching } = useGetSummariesQuery({ ...pagination, ...formikValues })
 
   const { handleSubmit, values, handleChange, setFieldValue, resetForm } =
     useFormik<ValuesFormik>({
@@ -56,13 +56,13 @@ const SummariesPage = () => {
       },
       //   validationSchema: loginSchema,
       onSubmit: (value) => {
-        setFormikValues({
-          id: value?.id || undefined,
-          carrier_id: value?.carrier_id || undefined,
-          start_date: value?.start_date || undefined,
-          end_date: value?.end_date || undefined,
-          sort: value?.sort
-        })
+        // setFormikValues({
+        //   id: value?.id || undefined,
+        //   carrier_id: value?.carrier_id || undefined,
+        //   start_date: value?.start_date || undefined,
+        //   end_date: value?.end_date || undefined,
+        //   sort: value?.sort
+        // })
       }
     })
 
@@ -171,7 +171,7 @@ const SummariesPage = () => {
           </Grid>
         </Grid>
       </Box>
-      <TableSummaries
+      {/* <TableSummaries
         data={data}
         setPagination={setPagination}
         pagination={pagination}
@@ -182,7 +182,7 @@ const SummariesPage = () => {
       />
       <ModalSummaries open={open} handleClose={handleChangeModal}>
         <FormChangeStatuses selected={selected}/>
-      </ModalSummaries>
+      </ModalSummaries> */}
     </>
   )
 }
