@@ -57,7 +57,7 @@ const DeliveriesPage = () => {
         getValueToolbar={(value) => setToolbar({ terminal: value })}
       />
       <ModalEnhanced
-        title="Actualizar estados de envios"
+        title="Actualizar estados de envíos"
         open={edit}
         handleClose={handleChangeModalUpdate}
       >

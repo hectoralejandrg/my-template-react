@@ -7,14 +7,15 @@ import {
   Switch
 } from '@mui/material'
 import CustomInput from '../../shared/CustomInput'
-import SelectRoles from './SelectRoles'
 import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import { useFormik } from 'formik'
-import SelectCompanies from './SelectCompanies'
 import { useUpdateUserMutation } from '../slice/usersApiSlice'
-import { useAppSelector } from '../../../store/useRedux'
+import { useAppDispatch, useAppSelector } from '../../../store/useRedux'
 import { useEffect } from 'react'
 import { updateUserSchema } from '../utils/updateUserSchema'
+import { showNotification } from '../../auth/slice/authSlice'
+import CompaniesAutocomplete from './AutocompleteCompanies'
+import AutocompleteRoles from './AutocompleteRoles'
 
 interface Props {
   handleClose: () => void
@@ -23,12 +24,13 @@ interface Props {
 interface PayloadUser {
   id?: number
   name?: string
-  role: number
+  role?: number
   active?: boolean
   company?: number
 }
 
 const FormUpdateUser = ({ handleClose }: Props) => {
+  const dispatch = useAppDispatch()
   const { users } = useAppSelector((state) => state.users)
   const { profile } = useAppSelector((state) => state.auth)
   const [updateMutation, { isLoading }] = useUpdateUserMutation()
@@ -36,9 +38,9 @@ const FormUpdateUser = ({ handleClose }: Props) => {
     useFormik({
       initialValues: {
         name: users?.name,
-        role: users?.role?.id.toString(),
+        role: users?.role,
         active: users?.active,
-        company: users?.company?.id
+        company: users?.company
       },
       validationSchema: updateUserSchema,
       onSubmit: async ({ role, name, active, company }) => {
@@ -46,23 +48,39 @@ const FormUpdateUser = ({ handleClose }: Props) => {
           id: users?.id,
           name,
           active,
-          role: Number(role)
+          role: role?.id
         }
         if (profile?.role?.id !== 1) user.company = profile?.companyId
-        if (profile?.role?.id === 1 && (role === '2' || role === '3')) user.company = Number(company)
+        if (profile?.role?.id === 1 && (role?.id === 2 || role?.id === 3)) user.company = company?.id
         await updateMutation({ ...user })
           .unwrap()
-          .then(() => handleClose())
+          .then(() => {
+            dispatch(
+              showNotification({
+                message: 'Usuario se actualizó correctamente',
+                type: 'success'
+              })
+            )
+            handleClose()
+          })
+          .catch((err) => {
+            dispatch(
+              showNotification({
+                message: err.response.data.info,
+                type: 'error'
+              })
+            )
+          })
       }
     })
 
   useEffect(() => {
-    if (values?.role === '1') setFieldValue('company', '')
+    if (values?.role?.id === 1) setFieldValue('company', null)
   }, [values])
 
   const validateCompany = (): boolean => {
     if (profile?.role?.id !== 1) return false
-    return values?.role === '2' || values?.role === '3'
+    return values?.role?.id === 2 || values?.role?.id === 3
   }
 
   return (
@@ -85,14 +103,20 @@ const FormUpdateUser = ({ handleClose }: Props) => {
             error={touched.name && Boolean(errors.name)}
             helperText={touched.name && errors.name}
           />
-          <SelectRoles
-            value={values.role}
-            onChange={(e) => setFieldValue('role', e.target.value)}
+          <AutocompleteRoles
+            inputLabel="Roles"
+            value={values?.role}
+            handleChange={(value) => setFieldValue('role', value)}
+            error={touched.role && Boolean(errors.role)}
+            helperText={touched.role && errors.role}
           />
           {validateCompany() && (
-            <SelectCompanies
-              value={values.company}
-              onChange={(e) => setFieldValue('company', e.target.value)}
+            <CompaniesAutocomplete
+              inputLabel="Compañía"
+              value={values?.company}
+              handleChange={(value) => setFieldValue('company', value)}
+              error={touched.company && Boolean(errors.company)}
+              helperText={touched.company && errors.company}
             />
           )}
           <FormControl variant="standard" fullWidth>

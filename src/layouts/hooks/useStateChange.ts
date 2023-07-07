@@ -1,4 +1,4 @@
-import { onAuthStateChanged } from 'firebase/auth'
+import { onIdTokenChanged } from 'firebase/auth'
 import { useEffect, useState } from 'react'
 import { auth } from '../../firebase'
 import {
@@ -13,11 +13,12 @@ export const useStateChange = () => {
   const dispatch = useAppDispatch()
   const { token } = useAppSelector((state) => state.auth)
   useEffect(() => {
-    const unsubuscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubuscribe = onIdTokenChanged(auth, (currentUser) => {
       if (currentUser) {
         dispatch(setUser(currentUser))
         console.log('newtoken', token, currentUser)
         currentUser.getIdToken().then((token) => {
+          console.log('cambia', token)
           dispatch(setToken(token))
           localStorage.setItem('token', token)
         })

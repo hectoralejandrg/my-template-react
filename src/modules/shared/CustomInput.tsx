@@ -25,7 +25,7 @@ const CustomInput = ({ inputLabel, ...props }: TextFieldCustom) => {
           {inputLabel}
         </InputLabel>
       )}
-      <TextField sx={styleLabel} {...props} />
+      <TextField sx={styleLabel} size="small" {...props} />
     </FormControl>
   )
 }

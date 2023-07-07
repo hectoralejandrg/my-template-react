@@ -1,11 +1,10 @@
 import { globalApi } from '../../../store/globalApi'
 import mainApi from '../../../utils/AxiosService'
-import { CompaniesResponse } from '../interfaces/compnaies.inteface'
 import { RolesResponse } from '../interfaces/roles.inteface'
 import { UsersResponse } from '../interfaces/users.interface'
 
 const apiUsersTags = globalApi.enhanceEndpoints({
-  addTagTypes: ['Users', 'Roles', 'Companies']
+  addTagTypes: ['Users', 'Roles']
 })
 
 export const usersApiSlice = apiUsersTags.injectEndpoints({
@@ -35,19 +34,6 @@ export const usersApiSlice = apiUsersTags.injectEndpoints({
         }
       },
       providesTags: (data) => data?.data ? [...data?.data?.map(({ id }) => ({ type: 'Roles' as const, id })), 'Roles'] : ['Roles']
-    }),
-    getCompanies: builder.query<CompaniesResponse, void>({
-      queryFn: async () => {
-        try {
-          const { data } = await mainApi('companies')
-          return { data }
-        } catch (error: any) {
-          return {
-            error
-          }
-        }
-      },
-      providesTags: (data) => data?.companies ? [...data?.companies?.map(({ id }) => ({ type: 'Companies' as const, id })), 'Companies'] : ['Companies']
     }),
     createUser: builder.mutation<void, { name:string, email:string, active: boolean, role: number, company?: number }>(
       {
@@ -85,7 +71,6 @@ export const usersApiSlice = apiUsersTags.injectEndpoints({
 export const {
   useGetUsersQuery,
   useGetRolesQuery,
-  useGetCompaniesQuery,
   useCreateUserMutation,
   useUpdateUserMutation
 } = usersApiSlice

@@ -2,13 +2,14 @@ import { Box, Grid } from '@mui/material'
 import { useFormik } from 'formik'
 import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import { useUpdateTrackingMutation } from '../slice/trackingApiSlice'
-import { useAppSelector } from '../../../store/useRedux'
+import { useAppDispatch, useAppSelector } from '../../../store/useRedux'
 import StatusAutocomplete from './StatusAutocomplete'
 import { Status } from '../interfaces/statusses.interface'
 import CustomInput from '../../shared/CustomInput'
 import { updateTrackingSchema } from '../utils/updateTrackingSchema'
 import InputFile from '../../shared/InputFile'
 import { onSelectFiles } from '../../shared/fileToBase64'
+import { showNotification } from '../../auth/slice/authSlice'
 
 interface Files64 {
   fileName: string
@@ -24,35 +25,61 @@ interface ValuesFormik {
 }
 
 const FormUpdateTracking = () => {
+  const dispatch = useAppDispatch()
   const { profile } = useAppSelector((state) => state.auth)
   const [updateTracking, { isLoading }] = useUpdateTrackingMutation()
-  const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
-    useFormik<ValuesFormik>({
-      initialValues: {
-        reference: '',
-        status: null,
-        comment: ''
-      },
-      validationSchema: updateTrackingSchema,
-      onSubmit: async (
-        { reference, status, comment, name, rut, imagesFile },
-        { resetForm }
-      ) => {
-        await updateTracking({
-          imported_id: reference,
-          user_id: profile?.user_entity_id,
-          status: status?.id,
-          evidence: {
-            comment,
-            name,
-            rut,
-            images: imagesFile?.map((f) => f.base64String)
-          }
+  const {
+    handleSubmit,
+    setFieldValue,
+    getFieldProps,
+    values,
+    touched,
+    errors
+  } = useFormik<ValuesFormik>({
+    initialValues: {
+      reference: '',
+      status: null,
+      comment: '',
+      name: '',
+      rut: ''
+    },
+    validationSchema: updateTrackingSchema,
+    onSubmit: async (
+      { reference, status, comment, name, rut, imagesFile },
+      { resetForm }
+    ) => {
+      await updateTracking({
+        imported_id: reference,
+        user_id: profile?.user_entity_id,
+        status: status?.id,
+        evidence: {
+          comment,
+          name,
+          rut,
+          images: imagesFile?.map((f) => f.base64String)
+        }
+      })
+        .unwrap()
+        .then((res) => {
+          resetForm()
+          dispatch(
+            showNotification({
+              // @ts-ignore
+              message: res.message,
+              type: 'success'
+            })
+          )
         })
-          .unwrap()
-          .then(() => resetForm())
-      }
-    })
+        .catch((err) => {
+          dispatch(
+            showNotification({
+              message: err.response.data.info,
+              type: 'error'
+            })
+          )
+        })
+    }
+  })
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file: File[] = []
@@ -76,12 +103,7 @@ const FormUpdateTracking = () => {
         <Grid container gap={3}>
           <CustomInput
             inputLabel="N° de referencia"
-            id="reference"
-            name="reference"
-            type="text"
-            size="small"
-            value={values.reference}
-            onChange={handleChange}
+            {...getFieldProps('reference')}
             error={touched.reference && Boolean(errors.reference)}
             helperText={touched.reference && errors.reference}
           />
@@ -96,23 +118,13 @@ const FormUpdateTracking = () => {
             <>
               <CustomInput
                 inputLabel="Nombre"
-                id="name"
-                name="name"
-                type="text"
-                size="small"
-                value={values.name}
-                onChange={handleChange}
+                {...getFieldProps('name')}
                 error={touched.name && Boolean(errors.name)}
                 helperText={touched.name && errors.name}
               />
               <CustomInput
                 inputLabel="Rut"
-                id="rut"
-                name="rut"
-                type="text"
-                size="small"
-                value={values.rut}
-                onChange={handleChange}
+                {...getFieldProps('rut')}
                 error={touched.rut && Boolean(errors.rut)}
                 helperText={touched.rut && errors.rut}
               />
@@ -120,12 +132,7 @@ const FormUpdateTracking = () => {
           )}
           <CustomInput
             inputLabel="Comentario"
-            id="comment"
-            name="comment"
-            type="text"
-            size="small"
-            value={values.comment}
-            onChange={handleChange}
+            {...getFieldProps('comment')}
             error={touched.comment && Boolean(errors.comment)}
             helperText={touched.comment && errors.comment}
             rows={3}

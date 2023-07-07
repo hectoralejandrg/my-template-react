@@ -1,14 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Profile } from '../interfaces/auth.interface'
+import { NotificationState } from '../interfaces/notification.interface'
 
 export interface AuthState {
   user?: any
   token?: string
   pageName?: string | null
   profile?: Profile
+  notification: NotificationState
 }
 
-const initialState = { token: '' } as AuthState
+const initialState = {
+  token: '',
+  notification: { open: false, message: '', type: '' }
+} as AuthState
 
 const authSlice = createSlice({
   name: 'authSlice',
@@ -26,10 +31,31 @@ const authSlice = createSlice({
     },
     setProfile: (state, action: PayloadAction<Profile>) => {
       state.profile = action.payload
+    },
+    showNotification: (
+      state,
+      action: PayloadAction<{
+        message: string
+        type: 'success' | 'error' | 'info' | ''
+      }>
+    ) => {
+      state.notification.open = true
+      state.notification.message = action.payload.message
+      state.notification.type = action.payload.type
+    },
+    hideNotification: (state, action: PayloadAction<'success' | 'error' | 'info' | ''>) => {
+      state.notification = { open: false, message: '', type: action.payload }
     }
   }
 })
 
-export const { setToken, setUser, setLogout, setPageName, setProfile } =
-  authSlice.actions
+export const {
+  setToken,
+  setUser,
+  setLogout,
+  setPageName,
+  setProfile,
+  showNotification,
+  hideNotification
+} = authSlice.actions
 export default authSlice.reducer

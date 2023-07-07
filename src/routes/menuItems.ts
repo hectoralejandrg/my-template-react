@@ -2,6 +2,7 @@ import AddLocationAltOutlinedIcon from '@mui/icons-material/AddLocationAltOutlin
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
 import ContentPasteIcon from '@mui/icons-material/ContentPaste'
 import PersonIcon from '@mui/icons-material/Person'
+import BusinessIcon from '@mui/icons-material/Business'
 
 export interface MenuItems {
   link: string
@@ -28,6 +29,12 @@ export const menuItems: MenuItems[] = [
     name: 'Manifiestos',
     icon: ContentPasteIcon,
     permissions: [1, 2, 3]
+  },
+  {
+    link: '/companies',
+    name: 'Compañías',
+    icon: BusinessIcon,
+    permissions: [1]
   },
   {
     link: '/users',

@@ -5,11 +5,11 @@ export const updateTrackingSchema = yup.object().shape({
   reference: yup.string().required('Campo requerido'),
   status: yup.object().nullable().required('Campo requerido'),
   name: yup.string().when('status', {
-    is: (status: Status) => status.terminal,
+    is: (status: Status) => status?.terminal === true,
     then: yup.string().required('Campo requerido')
   }),
   rut: yup.string().when('status', {
-    is: (status: Status) => status.terminal,
+    is: (status: Status) => status?.terminal === true,
     then: yup.string().required('Campo requerido')
   })
 })

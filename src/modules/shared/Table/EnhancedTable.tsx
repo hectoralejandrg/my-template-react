@@ -1,42 +1,52 @@
-import {
-  Box,
-  Paper,
-  Table,
-  TableContainer
-} from '@mui/material'
-import React, { useState } from 'react'
-import EnhancedTableToolbar from './EnhancedTableToolbar'
-import EnhancedTableHead, { ColumnType } from './EnhancedTableHeadC'
-// import EnhancedTableRows from './EnhancedTableRows'
+import { Box, Paper, Table, TableBody, TableContainer, TablePagination } from '@mui/material'
+import { ReactNode } from 'react'
+import EnhancedTableRow, { TableColumn } from './EnhancedTableRow'
+import EnhancedTableHead from './EnhancedTableHead'
+import TableRowsLoader from './TableRowsLoader'
 
-// type ColumnType<T, K extends keyof T> = {
-//   key: K
-//   header: string
-// }
-
-type TableProps<T, K extends keyof T> = {
-  rows: Array<T>
-  columns: Array<ColumnType<T, K>>
+export interface Pagination {
+  page: number
+  perPage: number
 }
 
-const EnhancedTable = <T, K extends keyof T>({
-  rows,
-  columns
-}: TableProps<T, K>) => {
-  const [selected, setSelected] = useState<readonly string[]>([])
+interface TableProps<T> {
+  data?: T[]
+  columns: TableColumn<T>[]
+  isFetching: boolean
+  pagination: Pagination
+  count?: number
+  rowsPerPageOptions: number[]
+  setPagination: React.Dispatch<React.SetStateAction<Pagination>>
+  actionsColumn?: (data: T) => ReactNode
+}
+
+const EnhancedTable = <T extends Record<string, any>>({
+  data,
+  columns,
+  isFetching,
+  pagination,
+  count,
+  rowsPerPageOptions,
+  setPagination,
+  actionsColumn
+}: TableProps<T>) => {
+  // const [selected, setSelected] = useState<readonly string[]>([])
   //   const [page, setPage] = useState(0)
   //   const [dense, setDense] = useState(false)
   //   const [rowsPerPage, setRowsPerPage] = useState(5)
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    if (event.target.checked) {
-      // @ts-ignore
-      const newSelected = rows.map((n: T) => n.id)
-      setSelected(newSelected)
-      return
-    }
-    setSelected([])
-  }
+  // const handleSelectAllClick = (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   index: number
+  // ) => {
+  //   if (event.target.checked) {
+  //     // @ts-ignore
+  //     const newSelected = rows.map((n: T) => n.id)
+  //     setSelected(newSelected)
+  //     return
+  //   }
+  //   setSelected([])
+  // }
 
   // const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
   //   const selectedIndex = selected.indexOf(name)
@@ -64,67 +74,41 @@ const EnhancedTable = <T, K extends keyof T>({
   //     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+      <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
+        {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="medium"
           >
-            <EnhancedTableHead
-              headCells={columns}
-              numSelected={selected.length}
-              onSelectAllClick={handleSelectAllClick}
-              rowCount={rows.length}
-            />
-            {/* <EnhancedTableRows
-              data={rows}
-              columns={columns}
-              isSelected={isSelected}
-              handleClick={handleClick}
-            /> */}
-            {/* <TableBody>
-              {rows.map((row, index) => {
-                const isItemSelected = isSelected(row.name)
-                const labelId = `enhanced-table-checkbox-${index}`
+            <EnhancedTableHead columns={columns} />
+            <TableBody>
+              {isFetching ? (
+                <TableRowsLoader rowsNum={10} headNum={columns.length + 1} />
+              ) : (
+                data?.map((row, index) => {
+                  // const isItemSelected = isSelected(row.name)
+                  // const labelId = `enhanced-table-checkbox-${index}`
 
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.name)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.name}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.calories}</TableCell>
-                    <TableCell align="right">{row.fat}</TableCell>
-                    <TableCell align="right">{row.carbs}</TableCell>
-                    <TableCell align="right">{row.protein}</TableCell>
-                  </TableRow>
-                )
-              })} */}
-            {/* {emptyRows > 0 && (
+                  return (
+                    <EnhancedTableRow<T>
+                      key={row.id.toString()}
+                      data={row}
+                      columns={columns}
+                      actionsColumn={actionsColumn}
+                      // hover
+                      // onClick={(event) => handleClick(event, row.name)}
+                      // role="checkbox"
+                      // aria-checked={isItemSelected}
+                      // tabIndex={-1}
+                      // selected={isItemSelected}
+                      // sx={{ cursor: 'pointer' }}
+                    />
+                  )
+                })
+              )}
+              {/* {emptyRows > 0 && (
                 <TableRow
                   style={{
                     height: (dense ? 33 : 53) * emptyRows
@@ -133,18 +117,32 @@ const EnhancedTable = <T, K extends keyof T>({
                   <TableCell colSpan={6} />
                 </TableRow>
               )} */}
-            {/* </TableBody> */}
+            </TableBody>
           </Table>
         </TableContainer>
-        {/* <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        /> */}
+        {data && count && (
+          <TablePagination
+            component="div"
+            rowsPerPageOptions={rowsPerPageOptions}
+            count={count}
+            page={pagination.page}
+            rowsPerPage={pagination.perPage}
+            onPageChange={(_, page) =>
+              setPagination((prev) => ({ ...prev, page }))
+            }
+            onRowsPerPageChange={(e) => {
+              setPagination((prev) => ({
+                ...prev,
+                page: 0,
+                perPage: parseInt(e.target.value)
+              }))
+            }}
+            labelRowsPerPage={'Filas por página'}
+            labelDisplayedRows={({ from, to, count }) =>
+              `${from}-${to} de ${count}`
+            }
+          />
+        )}
       </Paper>
     </Box>
   )

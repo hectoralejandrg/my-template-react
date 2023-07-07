@@ -37,7 +37,13 @@ const SelectGeneric = <T extends unknown>({
       <InputLabel shrink sx={{ fontSize: 20 }}>
         {inputLabel}
       </InputLabel>
-      <Select sx={styleLabelSelect} size="small" variant="outlined" {...props}>
+      <Select
+        sx={styleLabelSelect}
+        size="small"
+        variant="outlined"
+        defaultValue={''}
+        {...props}
+      >
         {data?.map((rol, index) => (
           <MenuItem key={`${rol[keyId]}-${index}`} value={`${rol[keyValue]}`}>
             {`${rol[keyName]}`}

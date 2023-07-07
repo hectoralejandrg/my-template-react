@@ -22,10 +22,10 @@ const resetPassword = () => {
           />
         </Grid>
         <Grid item marginBottom={{ md: 3, sm: 2, xs: 1 }}>
-          <Typography fontSize={14} fontWeight="bold" color="#18195E">
+          <Typography fontSize={18} fontWeight="bold" color="#18195E">
             Contraseña nueva
           </Typography>
-          <Typography fontSize={10} color="#18195E" marginTop={1}>
+          <Typography fontSize={16} color="#18195E" marginTop={1}>
             Escribe tu nueva contraseña y confirmala.
           </Typography>
         </Grid>

@@ -1,24 +1,20 @@
 import {
-  Checkbox,
+  // Checkbox,
   styled,
   TableCell,
   tableCellClasses,
   TableHead,
   TableRow
 } from '@mui/material'
+import { TableColumn } from './EnhancedTableRow'
 
 export interface HeadCell {
-  disablePadding: boolean
   id: string
   label: string
-  align: 'left' | 'center' | 'right' | 'justify' | 'inherit' | undefined
 }
 
-interface EnhancedTableProps {
-  numSelected: number
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
-  rowCount: number
-  headCells: HeadCell[]
+interface EnhancedTableProps<T> {
+  columns: TableColumn<T>[]
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -29,41 +25,24 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   }
 }))
 
-const EnhancedTableHead = ({
-  onSelectAllClick,
-  numSelected,
-  rowCount,
-  headCells
-}: EnhancedTableProps) => {
+const EnhancedTableHead = <T extends Record<string, any>>({
+  columns
+}: EnhancedTableProps<T>) => {
   return (
     <TableHead>
       <TableRow>
-        <StyledTableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts'
-            }}
-            sx={{
-              pr: 3,
-              '&.Mui-checked': {
-                color: '#F4BB43'
-              }
-            }}
-          />
-        </StyledTableCell>
-        {headCells.map((headCell) => (
+        {columns.map((head, index) => (
           <StyledTableCell
-            key={headCell.id}
-            align={headCell.align}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            key={`${head.key.toString()}-${index}`}
+            align={head.align}
+            padding={head.disablePadding ? 'none' : 'normal'}
           >
-            {headCell.label}
+            {head.title}
           </StyledTableCell>
         ))}
+        <StyledTableCell align="center" width={25}>
+          Acciones
+        </StyledTableCell>
       </TableRow>
     </TableHead>
   )

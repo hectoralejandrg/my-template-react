@@ -1,7 +1,6 @@
 import { Box, Button, Grid } from '@mui/material'
 import TableUsers, { Pagination } from '../components/TableUsers'
 import ScreenWrapper from '../../shared/ScreenWrapper'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import ModalEnhanced from '../../shared/ModalEnhanced'
 import { useState } from 'react'
 import FormNewUser from '../components/FormNewUser'
@@ -10,6 +9,7 @@ import ComponentRecovery from '../components/ComponentRecovery'
 import { Users } from '../interfaces/users.interface'
 import FormUpdateUser from '../components/FormUpdateUser'
 import { useAppSelector } from '../../../store/useRedux'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
 
 export type DataUsers = {
   id: string
@@ -48,32 +48,7 @@ const PageUsers = () => {
   return (
     <ScreenWrapper>
       <Box sx={{ marginBottom: 3 }}>
-        <Grid container justifyContent={'space-between'}>
-          <Grid item>
-            {/* <FormControl>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-              >
-                <FormControlLabel
-                  value="female"
-                  control={<Radio />}
-                  label="Todos"
-                />
-                <FormControlLabel
-                  value="male"
-                  control={<Radio />}
-                  label="Activos"
-                />
-                <FormControlLabel
-                  value="other"
-                  control={<Radio />}
-                  label="Inactivos"
-                />
-              </RadioGroup>
-            </FormControl> */}
-          </Grid>
+        <Grid container justifyContent={'end'}>
           <Grid item>
             <Button
               type="submit"
@@ -83,7 +58,7 @@ const PageUsers = () => {
                   'linear-gradient(90deg, #F49143 -21.52%, #F4BB43 104.43%)',
                 boxShadow: 'none'
               }}
-              startIcon={<PersonAddIcon />}
+              startIcon={<AddCircleIcon />}
               onClick={handleChangeModal}
             >
               Nuevo usuario

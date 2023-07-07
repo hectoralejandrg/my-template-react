@@ -1,13 +1,15 @@
 import { Box, DialogContent, Grid } from '@mui/material'
 import CustomInput from '../../shared/CustomInput'
 import { ButtonSubmit } from '../../shared/ButtonSubmit'
-import SelectRoles from './SelectRoles'
 import { useFormik } from 'formik'
-import SelectCompanies from './SelectCompanies'
 import { useCreateUserMutation } from '../slice/usersApiSlice'
 import { useEffect } from 'react'
 import { newUserSchema } from '../utils/newUserSchema'
 import { useAppSelector } from '../../../store/useRedux'
+import { Company } from '../../companies/interfaces/companies.interface'
+import AutocompleteCompanies from './AutocompleteCompanies'
+import AutocompleteRoles from './AutocompleteRoles'
+import { Roles } from '../interfaces/roles.inteface'
 
 interface Props {
   handleClose: () => void
@@ -21,16 +23,23 @@ interface PayloadUser {
   company?: number
 }
 
+interface ValuesFormik {
+  name: string
+  role?: Roles | null
+  email: string
+  company: Company | null
+}
+
 const FormNewUser = ({ handleClose }: Props) => {
   const [createUser, { isLoading }] = useCreateUserMutation()
   const { profile } = useAppSelector((state) => state.auth)
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
-    useFormik({
+    useFormik<ValuesFormik>({
       initialValues: {
         name: '',
-        role: '',
         email: '',
-        company: ''
+        role: null,
+        company: null
       },
       validationSchema: newUserSchema,
       onSubmit: async ({ role, company, email, name }) => {
@@ -41,7 +50,7 @@ const FormNewUser = ({ handleClose }: Props) => {
           role: Number(role)
         }
         if (profile?.role?.id !== 1) user.company = profile?.companyId
-        if (profile?.role?.id === 1 && (role === '2' || role === '3')) user.company = Number(company)
+        if (profile?.role?.id === 1 && (role?.id === 2 || role?.id === 3)) user.company = company?.id
         await createUser({ ...user })
           .unwrap()
           .then(() => handleClose())
@@ -49,12 +58,12 @@ const FormNewUser = ({ handleClose }: Props) => {
     })
 
   useEffect(() => {
-    if (values?.role === '1') setFieldValue('company', '')
+    if (values?.role?.id === 1) setFieldValue('company', null)
   }, [values])
 
   const validateCompany = (): boolean => {
     if (profile?.role?.id !== 1) return false
-    return values?.role === '2' || values?.role === '3'
+    return values?.role?.id === 2 || values?.role?.id === 3
   }
 
   return (
@@ -88,18 +97,20 @@ const FormNewUser = ({ handleClose }: Props) => {
             error={touched.email && Boolean(errors.email)}
             helperText={touched.email && errors.email}
           />
-          <SelectRoles
-            value={values.role}
-            onChange={(e) => setFieldValue('role', e.target.value)}
-            error={touched.role && Boolean(errors.role)}
-            // helperText={touched.role && errors.role}
-          />
+          <AutocompleteRoles
+              inputLabel="Roles"
+              value={values?.role}
+              handleChange={(value) => setFieldValue('role', value)}
+              error={touched.role && Boolean(errors.role)}
+              helperText={touched.role && errors.role}
+            />
           {validateCompany() && (
-            <SelectCompanies
+            <AutocompleteCompanies
+              inputLabel="Compañía"
               value={values.company}
-              onChange={(e) => setFieldValue('company', e.target.value)}
-              error={touched?.company && Boolean(errors?.company)}
-              helperText={touched?.company && errors?.company}
+              handleChange={(value) => setFieldValue('company', value)}
+              error={touched.company && Boolean(errors.company)}
+              helperText={touched.company && errors.company}
             />
           )}
           <Grid container justifyContent="flex-end">

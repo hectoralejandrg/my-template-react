@@ -5,7 +5,8 @@ import StatusAutocomplete from '../../tracking/components/StatusAutocomplete'
 import CustomInput from '../../shared/CustomInput'
 import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import { useUpdateStatusDeliveriesMutation } from '../slice/deliveriesApiSlice'
-import { useAppSelector } from '../../../store/useRedux'
+import { useAppDispatch, useAppSelector } from '../../../store/useRedux'
+import { showNotification } from '../../auth/slice/authSlice'
 
 interface ValuesFormik {
   reference: string
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const FormUpdateDeliveries = ({ selected, handleClose }: Props) => {
+  const dispatch = useAppDispatch()
   const { profile } = useAppSelector((state) => state.auth)
   const [changeStatuses, { isLoading }] = useUpdateStatusDeliveriesMutation()
   const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
@@ -42,7 +44,24 @@ const FormUpdateDeliveries = ({ selected, handleClose }: Props) => {
           }
         })
           .unwrap()
-          .then(() => handleClose())
+          .then((res) => {
+            dispatch(
+              showNotification({
+                // @ts-ignore
+                message: res.message,
+                type: 'success'
+              })
+            )
+            handleClose()
+          })
+          .catch((err) => {
+            dispatch(
+              showNotification({
+                message: err.response.data.info,
+                type: 'error'
+              })
+            )
+          })
       }
     })
   return (

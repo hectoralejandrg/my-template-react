@@ -26,6 +26,7 @@ const PageTracking = Loader(lazy(() => import('../modules/tracking/pages')))
 const PageDeliveries = Loader(lazy(() => import('../modules/deliveries/pages')))
 const PageSummaries = Loader(lazy(() => import('../modules/summaries/pages')))
 const PageUsers = Loader(lazy(() => import('../modules/users/pages')))
+const PageCompanies = Loader(lazy(() => import('../modules/companies/pages')))
 
 const routes: RouteObject[] = [
   {
@@ -65,6 +66,10 @@ const routes: RouteObject[] = [
           {
             path: 'users',
             element: <RoleRoute roles={[1, 2]} component={<PageUsers />} />
+          },
+          {
+            path: 'companies',
+            element: <RoleRoute roles={[1]} component={<PageCompanies />} />
           }
         ]
       }
