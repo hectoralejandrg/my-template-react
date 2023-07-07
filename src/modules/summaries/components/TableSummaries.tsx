@@ -12,9 +12,6 @@ import {
   TableRow
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import EnhancedTableHead, {
-  HeadCell
-} from '../../shared/Table/EnhancedTableHead'
 import EnhancedTableToolbar from '../../shared/Table/EnhancedTableToolbar'
 import {
   Pagination,
@@ -22,6 +19,7 @@ import {
   SummariesResponse
 } from '../interfaces/summaries.interface'
 import TableRowsLoader from '../../shared/Table/TableRowsLoader'
+// import EnhancedTableHead from '../../shared/Table/EnhancedTableHead'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -49,6 +47,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     color: '#6E6B7B'
   }
 }))
+
+interface HeadCell {
+  id: string
+  disablePadding: boolean
+  label: string
+  align: string
+}
 
 const headCell: HeadCell[] = [
   {
@@ -104,14 +109,14 @@ const TableSummaries = ({
 }: Props) => {
   const [rows, setRows] = useState<Summaries[]>(data?.data || [])
 
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id.toString())
-      setSelected(newSelected)
-      return
-    }
-    setSelected([])
-  }
+  // const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.checked) {
+  //     const newSelected = rows.map((n) => n.id.toString())
+  //     setSelected(newSelected)
+  //     return
+  //   }
+  //   setSelected([])
+  // }
 
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id)
@@ -154,12 +159,12 @@ const TableSummaries = ({
             aria-labelledby="tableTitle"
             size="medium"
           >
-            <EnhancedTableHead
+            {/* <EnhancedTableHead
               headCells={headCell}
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
               rowCount={rows.length}
-            />
+            /> */}
             <TableBody>
               {isFetching ? (
                 <TableRowsLoader
