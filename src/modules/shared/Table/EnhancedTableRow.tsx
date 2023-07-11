@@ -1,5 +1,11 @@
-import { TableCell, TableRow, styled, tableCellClasses } from '@mui/material'
-import { ReactNode } from 'react'
+import {
+  Checkbox,
+  TableCell,
+  TableRow,
+  styled,
+  tableCellClasses
+} from '@mui/material'
+import { ReactNode, useEffect, useState } from 'react'
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -33,6 +39,7 @@ export interface TableColumn<T> {
   title: string
   align?: 'left' | 'center' | 'right' | 'justify' | 'inherit' | undefined
   disablePadding?: boolean
+  width?: string | number
   render: (data: T[keyof T]) => ReactNode
 }
 
@@ -40,32 +47,63 @@ interface TableRowProps<T> {
   data: T
   columns: TableColumn<T>[]
   actionsColumn?: (data: T) => ReactNode
+  showCheckbox: boolean
+  onSelectRow?: (item: T, checked: boolean) => void
+  selectedItems: T[]
 }
 
 const EnhancedTableRow = <T extends Record<string, any>>({
   data,
   columns,
-  actionsColumn
+  showCheckbox = false,
+  onSelectRow,
+  actionsColumn,
+  selectedItems
 }: TableRowProps<T>) => {
+  const [checked, setChecked] = useState(false)
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked
+    setChecked(isChecked)
+    if (onSelectRow) {
+      onSelectRow(data, isChecked)
+    }
+  }
+
+  useEffect(() => {
+    setChecked(selectedItems.includes(data))
+  }, [data, selectedItems])
+
   return (
     <StyledTableRow
       hover
-      // @ts-ignore
-      // onClick={(event) => handleClick(event, row[index].key)}
       role="checkbox"
-      // aria-checked={isItemSelected}
       tabIndex={-1}
-      // selected={isItemSelected}
       sx={{ cursor: 'pointer' }}
     >
+      {showCheckbox && (
+        <StyledTableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            checked={checked}
+            onChange={handleCheckboxChange}
+            sx={{
+              '&.Mui-checked': {
+                color: '#F4BB43'
+              }
+            }}
+          />
+        </StyledTableCell>
+      )}
       {columns.map((column) => {
         return (
-          <StyledTableCell key={column.key.toString()}>
+          <StyledTableCell key={column.key.toString()} align={column.align}>
             {column.render(data[column.key])}
           </StyledTableCell>
         )
       })}
-      {actionsColumn && <StyledTableCell align='center'>{actionsColumn(data)}</StyledTableCell>}
+      {actionsColumn && (
+        <StyledTableCell align="center">{actionsColumn(data)}</StyledTableCell>
+      )}
     </StyledTableRow>
   )
 }

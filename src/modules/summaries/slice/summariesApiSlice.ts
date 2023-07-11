@@ -3,24 +3,23 @@ import { globalApi } from '../../../store/globalApi'
 import mainApi from '../../../utils/AxiosService'
 import { SummariesResponse } from '../interfaces/summaries.interface'
 import { PayloadSummaries } from '../interfaces/payloadSummaries.interface'
-
-export interface ParamsSummaries {
-  id?: string
-  carrier_id?: string
-  page?: number
-  limit?: number
-  sort?: string
-  start_date?: string | Dayjs | null
-  end_date?: string | Dayjs | null
-}
+import { SummaryToDeliveriesResponse } from '../interfaces/deliveries.interface'
 
 const apiSummariesTags = globalApi.enhanceEndpoints({
-  addTagTypes: ['Summaries']
+  addTagTypes: ['Summaries', 'DetailsSummary']
 })
 
 export const summariesApiSlice = apiSummariesTags.injectEndpoints({
   endpoints: (builder) => ({
-    getSummaries: builder.query<SummariesResponse, ParamsSummaries>({
+    getSummaries: builder.query<SummariesResponse, {
+      id?: string
+      carrier_id?: string
+      page?: number
+      limit?: number
+      sort?: string
+      start_date?: string | Dayjs | null
+      end_date?: string | Dayjs | null
+    }>({
       queryFn: async (params) => {
         try {
           const { data } = await mainApi('summaries', { params })
@@ -32,7 +31,21 @@ export const summariesApiSlice = apiSummariesTags.injectEndpoints({
         }
       },
       providesTags: (data) =>
-        data?.data ? [...data?.data.map(({ id }) => ({ type: 'Summaries' as const, id })), 'Summaries'] : ['Summaries']
+        data ? [...data?.summaries?.map(({ id }) => ({ type: 'Summaries' as const, id })), 'Summaries'] : ['Summaries']
+    }),
+    getDeliveriesToSummaries: builder.query<SummaryToDeliveriesResponse[], { summaryId?: string }>({
+      queryFn: async ({ summaryId }) => {
+        try {
+          const { data } = await mainApi(`/deliveries-from-summary?summary_id=${summaryId}`)
+          return { data }
+        } catch (error: any) {
+          return {
+            error
+          }
+        }
+      },
+      providesTags: (data) =>
+        data ? [...data?.map(({ id }) => ({ type: 'DetailsSummary' as const, id })), 'DetailsSummary'] : ['DetailsSummary']
     }),
     changeStatusesSummaries: builder.mutation<SummariesResponse, PayloadSummaries>(
       {
@@ -54,5 +67,6 @@ export const summariesApiSlice = apiSummariesTags.injectEndpoints({
 
 export const {
   useGetSummariesQuery,
+  useGetDeliveriesToSummariesQuery,
   useChangeStatusesSummariesMutation
 } = summariesApiSlice

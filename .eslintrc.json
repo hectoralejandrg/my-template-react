@@ -22,7 +22,8 @@
     ],
     "rules": {
         "react/react-in-jsx-scope": "off",
-        "multiline-ternary": ["error", "never"]
+        "multiline-ternary": ["error", "never"],
+        "camelcase": "off"
     },
     "settings": {
         "react": {

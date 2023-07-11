@@ -43,7 +43,10 @@ const authSlice = createSlice({
       state.notification.message = action.payload.message
       state.notification.type = action.payload.type
     },
-    hideNotification: (state, action: PayloadAction<'success' | 'error' | 'info' | ''>) => {
+    hideNotification: (
+      state,
+      action: PayloadAction<'success' | 'error' | 'info' | ''>
+    ) => {
       state.notification = { open: false, message: '', type: action.payload }
     }
   }

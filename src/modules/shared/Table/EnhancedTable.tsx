@@ -1,5 +1,12 @@
-import { Box, Paper, Table, TableBody, TableContainer, TablePagination } from '@mui/material'
-import { ReactNode } from 'react'
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableContainer,
+  TablePagination
+} from '@mui/material'
+import { ReactNode, useEffect, useState } from 'react'
 import EnhancedTableRow, { TableColumn } from './EnhancedTableRow'
 import EnhancedTableHead from './EnhancedTableHead'
 import TableRowsLoader from './TableRowsLoader'
@@ -13,11 +20,14 @@ interface TableProps<T> {
   data?: T[]
   columns: TableColumn<T>[]
   isFetching: boolean
-  pagination: Pagination
+  pagination?: Pagination
   count?: number
-  rowsPerPageOptions: number[]
-  setPagination: React.Dispatch<React.SetStateAction<Pagination>>
+  rowsPerPageOptions?: number[]
+  showCheckbox?: boolean
+  showActions?: boolean
+  setPagination?: React.Dispatch<React.SetStateAction<Pagination>>
   actionsColumn?: (data: T) => ReactNode
+  actionsToolbar?: (items: T[]) => ReactNode
 }
 
 const EnhancedTable = <T extends Record<string, any>>({
@@ -27,83 +37,86 @@ const EnhancedTable = <T extends Record<string, any>>({
   pagination,
   count,
   rowsPerPageOptions,
+  showCheckbox = false,
+  showActions = false,
   setPagination,
-  actionsColumn
+  actionsColumn,
+  actionsToolbar
 }: TableProps<T>) => {
-  // const [selected, setSelected] = useState<readonly string[]>([])
-  //   const [page, setPage] = useState(0)
-  //   const [dense, setDense] = useState(false)
-  //   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [selectedItems, setSelectedItems] = useState<T[]>([])
+  const [selectAllChecked, setSelectAllChecked] = useState(false)
+  const [indeterminate, setIndeterminate] = useState(false)
 
-  // const handleSelectAllClick = (
-  //   event: React.ChangeEvent<HTMLInputElement>,
-  //   index: number
-  // ) => {
-  //   if (event.target.checked) {
-  //     // @ts-ignore
-  //     const newSelected = rows.map((n: T) => n.id)
-  //     setSelected(newSelected)
-  //     return
-  //   }
-  //   setSelected([])
-  // }
+  const handleSelectRow = (item: T, checked: boolean) => {
+    if (checked) {
+      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, item])
+    } else {
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter((selectedItem) => selectedItem !== item)
+      )
+    }
+  }
 
-  // const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-  //   const selectedIndex = selected.indexOf(name)
-  //   let newSelected: readonly string[] = []
+  const handleSelectAll = (checked: boolean) => {
+    if (checked && data) {
+      setSelectedItems(data)
+    } else {
+      setSelectedItems([])
+    }
+    setSelectAllChecked(checked)
+  }
 
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name)
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1))
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1))
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1)
-  //     )
-  //   }
+  useEffect(() => {
+    if (selectedItems.length === 0) {
+      setSelectAllChecked(false)
+      setIndeterminate(false)
+    } else if (selectedItems.length === data?.length) {
+      setSelectAllChecked(true)
+      setIndeterminate(false)
+    } else {
+      setIndeterminate(true)
+    }
+  }, [selectedItems, data])
 
-  //   setSelected(newSelected)
-  // }
+  const getHeadNum = () => {
+    let count = 0
+    if (showActions) count += 1
+    if (showCheckbox) count += 1
+    return columns.length + count
+  }
 
-  // const isSelected = (name: string) => selected.indexOf(name) !== -1
-
-  //   const emptyRows =
-  //     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, boxShadow: 'none' }}>
-        {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
+        {actionsToolbar && <>{actionsToolbar(selectedItems)}</>}
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="medium"
           >
-            <EnhancedTableHead columns={columns} />
+            <EnhancedTableHead
+              columns={columns}
+              selectAllChecked={selectAllChecked}
+              onSelectAll={handleSelectAll}
+              showCheckbox={showCheckbox}
+              showActions={showActions}
+              indeterminate={indeterminate}
+            />
             <TableBody>
               {isFetching ? (
-                <TableRowsLoader rowsNum={10} headNum={columns.length + 1} />
+                <TableRowsLoader rowsNum={10} headNum={getHeadNum()} />
               ) : (
                 data?.map((row, index) => {
-                  // const isItemSelected = isSelected(row.name)
-                  // const labelId = `enhanced-table-checkbox-${index}`
-
                   return (
                     <EnhancedTableRow<T>
                       key={row.id.toString()}
                       data={row}
                       columns={columns}
                       actionsColumn={actionsColumn}
-                      // hover
-                      // onClick={(event) => handleClick(event, row.name)}
-                      // role="checkbox"
-                      // aria-checked={isItemSelected}
-                      // tabIndex={-1}
-                      // selected={isItemSelected}
-                      // sx={{ cursor: 'pointer' }}
+                      showCheckbox={showCheckbox}
+                      onSelectRow={handleSelectRow}
+                      selectedItems={selectedItems}
                     />
                   )
                 })
@@ -120,7 +133,7 @@ const EnhancedTable = <T extends Record<string, any>>({
             </TableBody>
           </Table>
         </TableContainer>
-        {data && count && (
+        {data && count && pagination && setPagination && (
           <TablePagination
             component="div"
             rowsPerPageOptions={rowsPerPageOptions}

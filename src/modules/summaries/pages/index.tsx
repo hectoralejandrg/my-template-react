@@ -1,158 +1,102 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  TextField
-} from '@mui/material'
-import { useFormik } from 'formik'
-import SearchIcon from '@mui/icons-material/Search'
-import RestartAltIcon from '@mui/icons-material/RestartAlt'
-// import { useGetSummariesQuery } from '../slice/summariesApiSlice'
-// import TableSummaries from '../components/TableSummaries'
-// import { useState } from 'react'
-// import { Pagination } from '../interfaces/summaries.interface'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import dayjs, { Dayjs } from 'dayjs'
-// import ModalSummaries from '../components/ModalSummaries'
-// import FormChangeStatuses from '../components/FormChangeStatuses'
+import { Button, IconButton, Toolbar, Tooltip } from '@mui/material'
+import dayjs from 'dayjs'
+import { useState } from 'react'
+import { useGetSummariesQuery } from '../slice/summariesApiSlice'
+import EnhancedTable, { Pagination } from '../../shared/Table/EnhancedTable'
+import { Company, Summary } from '../interfaces/summaries.interface'
+import { TableColumn } from '../../shared/Table/EnhancedTableRow'
+import DescriptionIcon from '@mui/icons-material/Description'
+import ModalEnhanced from '../../shared/ModalEnhanced'
+import FormChangeStatuses from '../components/FormChangeStatuses'
+import { useNavigate } from 'react-router-dom'
+import ScreenWrapper from '../../shared/ScreenWrapper'
+import FiltersTable from '../components/FiltersTable'
 
-const styleLabel = {
-  'label + &': {
-    marginTop: 3
+const columns: TableColumn<Summary>[] = [
+  {
+    key: 'id',
+    title: 'ID',
+    align: 'center',
+    width: '8%',
+    render: (id) => <>{id}</>
+  },
+  {
+    key: 'company',
+    title: 'Compañía',
+    disablePadding: false,
+    align: 'left',
+    render: (company) => <>{(company as Company)?.name}</>
+  },
+  {
+    key: 'CountDeliveries',
+    title: 'Envíos',
+    disablePadding: false,
+    align: 'left',
+    render: (CountDeliveries) => <>{CountDeliveries}</>
+  },
+  {
+    key: 'updated_at',
+    title: 'Actualizado',
+    disablePadding: false,
+    align: 'left',
+    // eslint-disable-next-line camelcase
+    render: (updated_at) => (
+      // eslint-disable-next-line camelcase
+      <>{dayjs(updated_at as string).format('DD-MM-YYYY HH:mm')}</>
+    )
+  },
+  {
+    key: 'created_at',
+    title: 'Creado',
+    disablePadding: false,
+    align: 'left',
+    // eslint-disable-next-line camelcase
+    render: (created_at) => (
+      // eslint-disable-next-line camelcase
+      <>{dayjs(created_at as string).format('DD-MM-YYYY HH:mm')}</>
+    )
   }
-}
-interface ValuesFormik {
-  id?: string
-  carrier_id?: string
-  start_date?: string | Dayjs | null
-  end_date?: string | Dayjs | null
-  sort?: string
-}
+]
 
-const SummariesPage = () => {
-  // const [formikValues, setFormikValues] = useState<ValuesFormik>()
-  // const [selected, setSelected] = useState<readonly string[]>([])
-  // const [pagination, setPagination] = useState<Pagination>({
-  //   page: 0,
-  //   limit: 10
-  // })
-  // const [open, setOpen] = useState(false)
-  // const handleChangeModal = () => {
-  //   setOpen(prev => !prev)
-  // }
-  // const { data, isFetching } = useGetSummariesQuery({ ...pagination, ...formikValues })
-
-  const { handleSubmit, values, handleChange, setFieldValue, resetForm } =
-    useFormik<ValuesFormik>({
-      initialValues: {
-        id: '',
-        carrier_id: '',
-        start_date: null,
-        end_date: null,
-        sort: 'asc'
-      },
-      //   validationSchema: loginSchema,
-      onSubmit: (value) => {
-        // setFormikValues({
-        //   id: value?.id || undefined,
-        //   carrier_id: value?.carrier_id || undefined,
-        //   start_date: value?.start_date || undefined,
-        //   end_date: value?.end_date || undefined,
-        //   sort: value?.sort
-        // })
-      }
-    })
-
+const actionsColumn = (data: Summary) => {
+  const navigate = useNavigate()
+  const handleChangeModalUpdate = () => {
+    navigate(`/summaries/deliveries/${data?.id}`)
+  }
   return (
     <>
-      <Box component={'form'} onSubmit={handleSubmit}>
-        <Grid container my={3} gap={1}>
-          <Grid item lg={2}>
-            <FormControl variant="standard" fullWidth>
-              <InputLabel htmlFor="id" shrink sx={{ fontSize: 20 }}>
-                ID del manifiesto
-              </InputLabel>
-              <TextField
-                id="id"
-                name="id"
-                type="text"
-                size="small"
-                sx={styleLabel}
-                placeholder="Ingrese id del manifiesto"
-                value={values.id}
-                onChange={handleChange}
-                // error={touched.reference && Boolean(errors.reference)}
-                // helperText={touched.reference && errors.reference}
-              />
-            </FormControl>
-          </Grid>
-          <Grid item lg={2}>
-            <FormControl variant="standard" fullWidth>
-              <InputLabel htmlFor="carrier_id" shrink sx={{ fontSize: 20 }}>
-                ID del carrier
-              </InputLabel>
-              <TextField
-                id="carrier_id"
-                name="carrier_id"
-                type="text"
-                size="small"
-                sx={styleLabel}
-                placeholder="Ingrese id del carrier"
-                value={values.carrier_id}
-                onChange={handleChange}
-                // error={touched.reference && Boolean(errors.reference)}
-                // helperText={touched.reference && errors.reference}
-              />
-            </FormControl>
-          </Grid>
-          <Grid item lg={2}>
-            <FormControl variant="standard" fullWidth>
-              <InputLabel shrink sx={{ fontSize: 20 }}>
-                Desde
-              </InputLabel>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={values.start_date}
-                  onChange={(newValue) =>
-                    setFieldValue(
-                      'start_date',
-                      dayjs(newValue).format('YYYY-MM-DD')
-                    )
-                  }
-                  sx={styleLabel}
-                  slotProps={{ textField: { size: 'small' } }}
-                />
-              </LocalizationProvider>
-            </FormControl>
-          </Grid>
-          <Grid item lg={2}>
-            <FormControl variant="standard" fullWidth>
-              <InputLabel shrink sx={{ fontSize: 20 }}>
-                Hasta
-              </InputLabel>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  value={values.start_date}
-                  onChange={(newValue) =>
-                    setFieldValue(
-                      'end_date',
-                      dayjs(newValue).format('YYYY-MM-DD')
-                    )
-                  }
-                  sx={styleLabel}
-                  slotProps={{ textField: { size: 'small' } }}
-                />
-              </LocalizationProvider>
-            </FormControl>
-          </Grid>
+      <Tooltip title="Ver envíos" arrow>
+        <IconButton
+          color="inherit"
+          size="small"
+          onClick={() => handleChangeModalUpdate()}
+        >
+          <DescriptionIcon fontSize="small" sx={{ color: '#1B8ACE' }} />
+        </IconButton>
+      </Tooltip>
+    </>
+  )
+}
 
-          <Grid item lg={2} alignSelf="end">
+const actionsToolbar = (items: Summary[]) => {
+  const [modal, setModal] = useState(false)
+
+  const handleChange = () => {
+    setModal((prev) => !prev)
+  }
+  return (
+    <>
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 }
+        }}
+      >
+        <Tooltip title="Delete">
+          <span>
             <Button
-              type="submit"
               variant="contained"
+              disabled={items?.length <= 0}
               sx={{
                 mr: 1,
                 background: '#F4BB43',
@@ -162,28 +106,52 @@ const SummariesPage = () => {
                   opacity: 0.9
                 }
               }}
+              onClick={handleChange}
             >
-              <SearchIcon />
+              Cambiar estados
             </Button>
-            <Button variant="outlined" onClick={() => resetForm()}>
-              <RestartAltIcon />
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-      {/* <TableSummaries
-        data={data}
-        setPagination={setPagination}
-        pagination={pagination}
-        handleModal={handleChangeModal}
-        selected={selected}
-        setSelected={setSelected}
-        isFetching={isFetching}
-      />
-      <ModalSummaries open={open} handleClose={handleChangeModal}>
-        <FormChangeStatuses selected={selected}/>
-      </ModalSummaries> */}
+          </span>
+        </Tooltip>
+      </Toolbar>
+      <ModalEnhanced
+        title="Cambiar estados"
+        open={modal}
+        handleClose={handleChange}
+      >
+        <FormChangeStatuses selected={items} handleClose={handleChange} />
+      </ModalEnhanced>
     </>
+  )
+}
+
+const SummariesPage = () => {
+  const [pagination, setPagination] = useState<Pagination>({
+    page: 0,
+    perPage: 10
+  })
+  const [filters, setFilters] = useState({})
+  const { data, isFetching } = useGetSummariesQuery({
+    ...pagination,
+    ...filters
+  })
+
+  return (
+    <ScreenWrapper>
+      <FiltersTable getValuesFilter={(values) => setFilters({ ...values })} />
+      <EnhancedTable<Summary>
+        data={data?.summaries}
+        isFetching={isFetching}
+        columns={columns}
+        pagination={pagination}
+        setPagination={setPagination}
+        rowsPerPageOptions={[5, 10, 20, 30, 40, 50]}
+        count={data?.total}
+        actionsColumn={actionsColumn}
+        actionsToolbar={actionsToolbar}
+        showCheckbox
+        showActions
+      />
+    </ScreenWrapper>
   )
 }
 

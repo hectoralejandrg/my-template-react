@@ -12,7 +12,13 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import FormUpdateCompany from '../components/FormUpdateCompany'
 
 const columns: TableColumn<Company>[] = [
-  { key: 'id', title: 'ID', align: 'left', render: (id) => <>{id}</> },
+  {
+    key: 'id',
+    title: 'ID',
+    align: 'center',
+    width: 5,
+    render: (id) => <>{id}</>
+  },
   {
     key: 'name',
     title: 'Nombre',
@@ -101,6 +107,7 @@ const CompaniesPage = () => {
         rowsPerPageOptions={[5, 10, 20, 30, 40, 50]}
         count={data?.companies?.count}
         actionsColumn={actionsColumn}
+        showActions
       />
       <ModalEnhanced
         title="Crear nueva compañía"

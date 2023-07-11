@@ -1,102 +1,122 @@
-import { Box, Grid } from '@mui/material'
-import StatusInput from '../../shared/StatusInput'
+import { Box, DialogContent, Grid } from '@mui/material'
 import { ButtonSubmit } from '../../shared/ButtonSubmit'
 import { useFormik } from 'formik'
 import CustomInput from '../../shared/CustomInput'
 import { useChangeStatusesSummariesMutation } from '../slice/summariesApiSlice'
+import { Summary } from '../interfaces/summaries.interface'
+import StatusAutocomplete from '../../tracking/components/StatusAutocomplete'
+import { Status } from '../../tracking/interfaces/statusses.interface'
+import { useAppDispatch, useAppSelector } from '../../../store/useRedux'
+import { showNotification } from '../../auth/slice/authSlice'
 
 interface ValuesFormik {
-  name: string
-  status: string
-  comment: string
-  rut: string
+  status: Status | null
+  name?: string
+  comment?: string
+  rut?: string
 }
 
 interface Props {
-  selected: readonly string[]
+  selected: Summary[]
+  handleClose: () => void
 }
 
-const FormChangeStatuses = ({ selected }: Props) => {
+const FormChangeStatuses = ({ selected, handleClose }: Props) => {
+  const dispatch = useAppDispatch()
+  const { profile } = useAppSelector((state) => state.auth)
   const [changeStatuses, { isLoading }] = useChangeStatusesSummariesMutation()
-  const { handleSubmit, handleChange, setFieldValue, values, touched, errors } =
-    useFormik<ValuesFormik>({
-      initialValues: {
-        name: '',
-        status: '',
-        comment: '',
-        rut: ''
-      },
-      //   validationSchema: loginSchema,
-      onSubmit: async ({ name, status, comment, rut }) => {
-        await changeStatuses({
-          summaries_ids: selected?.map((id) => Number(id)),
-          status_id: Number(status),
-          user_id: 1,
-          evidence: {
-            comment,
-            name,
-            rut
-          }
+  const {
+    handleSubmit,
+    setFieldValue,
+    values,
+    touched,
+    errors,
+    getFieldProps
+  } = useFormik<ValuesFormik>({
+    initialValues: {
+      status: null
+    },
+    //   validationSchema: loginSchema,
+    onSubmit: async ({ name, status, comment, rut }) => {
+      await changeStatuses({
+        summaries_ids: selected?.map(({ id }) => id),
+        status_id: status?.id,
+        user_id: profile?.user_entity_id,
+        evidence: {
+          comment,
+          name,
+          rut
+        }
+      })
+        .unwrap()
+        .then((res) => {
+          dispatch(
+            showNotification({
+              // @ts-ignore
+              message: res.message,
+              type: 'success'
+            })
+          )
+          handleClose()
         })
-      }
-    })
+        .catch((err) => {
+          dispatch(
+            showNotification({
+              message: err.response.data.info,
+              type: 'error'
+            })
+          )
+        })
+    }
+  })
   return (
-    <Box
-      component="form"
-      noValidate
-      onSubmit={handleSubmit}
-      sx={{ width: '100%' }}
-    >
-      <Grid container gap={3}>
-        <StatusInput
-          inputLabel="Estado"
-          keyStatus="id"
-          value={values.status}
-          onChange={(e) => setFieldValue('status', e.target.value)}
-        />
-        <CustomInput
-          inputLabel="Nombre"
-          id="name"
-          name="name"
-          type="text"
-          size="small"
-          value={values.name}
-          onChange={handleChange}
-          error={touched.name && Boolean(errors.name)}
-          helperText={touched.name && errors.name}
-        />
-        <CustomInput
-          inputLabel="Rut"
-          id="rut"
-          name="rut"
-          type="text"
-          size="small"
-          value={values.rut}
-          onChange={handleChange}
-          error={touched.rut && Boolean(errors.rut)}
-          helperText={touched.rut && errors.rut}
-        />
-        <CustomInput
-          inputLabel="Comentario"
-          id="comment"
-          name="comment"
-          type="comment"
-          size="small"
-          fullWidth
-          multiline
-          rows={3}
-          value={values.comment}
-          onChange={handleChange}
-          error={touched.comment && Boolean(errors.comment)}
-          helperText={touched.comment && errors.comment}
-        />
-        <Grid container justifyContent="flex-end">
-          <ButtonSubmit isLoading={isLoading} icon="nope" sx={{ px: 10 }}>
-            Guardar
-          </ButtonSubmit>
+    <DialogContent>
+      <Box
+        component="form"
+        noValidate
+        onSubmit={handleSubmit}
+        sx={{ width: '100%' }}
+      >
+        <Grid container gap={3}>
+          <StatusAutocomplete
+            inputLabel="Estado"
+            value={values?.status}
+            handleChange={(value) => setFieldValue('status', value)}
+            error={touched.status && Boolean(errors.status)}
+            helperText={touched.status && errors.status}
+          />
+          {values?.status?.terminal && (
+            <>
+              <CustomInput
+                inputLabel="Nombre"
+                {...getFieldProps('name')}
+                error={touched.name && Boolean(errors.name)}
+                helperText={touched.name && errors.name}
+              />
+              <CustomInput
+                inputLabel="Rut"
+                {...getFieldProps('rut')}
+                error={touched.rut && Boolean(errors.rut)}
+                helperText={touched.rut && errors.rut}
+              />
+            </>
+          )}
+          <CustomInput
+            inputLabel="Comentario"
+            {...getFieldProps('comment')}
+            multiline
+            rows={3}
+            error={touched.comment && Boolean(errors.comment)}
+            helperText={touched.comment && errors.comment}
+          />
+          <Grid container justifyContent="flex-end">
+            <ButtonSubmit isLoading={isLoading} icon="nope" sx={{ px: 10 }}>
+              Guardar
+            </ButtonSubmit>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </DialogContent>
   )
 }
 

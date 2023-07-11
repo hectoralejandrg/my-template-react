@@ -24,9 +24,12 @@ const PageResetPassword = Loader(
 // const Authentication = Loader(lazy(() => import('./modules/auth/login/page')))
 const PageTracking = Loader(lazy(() => import('../modules/tracking/pages')))
 const PageDeliveries = Loader(lazy(() => import('../modules/deliveries/pages')))
-const PageSummaries = Loader(lazy(() => import('../modules/summaries/pages')))
 const PageUsers = Loader(lazy(() => import('../modules/users/pages')))
 const PageCompanies = Loader(lazy(() => import('../modules/companies/pages')))
+const PageSummaries = Loader(lazy(() => import('../modules/summaries/pages')))
+const PageDeliveriesDetails = Loader(
+  lazy(() => import('../modules/summaries/pages/DeliveriesDetails'))
+)
 
 const routes: RouteObject[] = [
   {
@@ -53,15 +56,30 @@ const routes: RouteObject[] = [
           },
           {
             path: 'tracking',
-            element: <RoleRoute roles={[1, 2, 3]} component={<PageTracking />} />
+            element: (
+              <RoleRoute roles={[1, 2, 3]} component={<PageTracking />} />
+            )
           },
           {
             path: 'deliveries',
-            element: <RoleRoute roles={[1, 2, 3]} component={<PageDeliveries />} />
+            element: (
+              <RoleRoute roles={[1, 2, 3]} component={<PageDeliveries />} />
+            )
           },
           {
             path: 'summaries',
-            element: <RoleRoute roles={[1, 2, 3]} component={<PageSummaries />} />
+            element: (
+              <RoleRoute roles={[1, 2, 3]} component={<PageSummaries />} />
+            )
+          },
+          {
+            path: 'summaries/deliveries/:id',
+            element: (
+              <RoleRoute
+                roles={[1, 2, 3]}
+                component={<PageDeliveriesDetails />}
+              />
+            )
           },
           {
             path: 'users',
