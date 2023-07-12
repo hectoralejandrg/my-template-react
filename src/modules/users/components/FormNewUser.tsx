@@ -17,7 +17,7 @@ interface Props {
 
 interface PayloadUser {
   name: string
-  role: number
+  role?: number
   email: string
   active: boolean
   company?: number
@@ -47,7 +47,7 @@ const FormNewUser = ({ handleClose }: Props) => {
           name,
           email,
           active: true,
-          role: Number(role)
+          role: role?.id
         }
         if (profile?.role?.id !== 1) user.company = profile?.companyId
         if (profile?.role?.id === 1 && (role?.id === 2 || role?.id === 3)) user.company = company?.id

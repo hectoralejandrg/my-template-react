@@ -39,9 +39,7 @@ const FormUpdateTracking = () => {
     initialValues: {
       reference: '',
       status: null,
-      comment: '',
-      name: '',
-      rut: ''
+      comment: ''
     },
     validationSchema: updateTrackingSchema,
     onSubmit: async (
@@ -49,9 +47,9 @@ const FormUpdateTracking = () => {
       { resetForm }
     ) => {
       await updateTracking({
-        imported_id: reference,
+        id: Number(reference),
         user_id: profile?.user_entity_id,
-        status: status?.id,
+        status_id: status?.id,
         evidence: {
           comment,
           name,
@@ -102,7 +100,7 @@ const FormUpdateTracking = () => {
       >
         <Grid container gap={3}>
           <CustomInput
-            inputLabel="N° de referencia"
+            inputLabel="ID de envío"
             {...getFieldProps('reference')}
             error={touched.reference && Boolean(errors.reference)}
             helperText={touched.reference && errors.reference}

@@ -10,11 +10,19 @@ import dayjs from 'dayjs'
 import { useAppDispatch } from '../../../store/useRedux'
 import { setPageName } from '../../auth/slice/authSlice'
 import ScreenWrapper from '../../shared/ScreenWrapper'
-import { Grid, IconButton, Typography, useTheme } from '@mui/material'
+import { Button, Grid, IconButton, Toolbar, Tooltip, Typography, useTheme } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import ModalEnhanced from '../../shared/ModalEnhanced'
+import FormUpdateDeliveries from '../../deliveries/components/FormUpdateDeliveries'
 
 const columns: TableColumn<SummaryToDeliveriesResponse>[] = [
+  {
+    key: 'id',
+    title: 'ID',
+    align: 'center',
+    render: (id) => <>{id}</>
+  },
   {
     key: 'imported_id',
     title: 'Referencia del envío',
@@ -38,15 +46,15 @@ const columns: TableColumn<SummaryToDeliveriesResponse>[] = [
     )
   },
   {
-    key: 'status',
+    key: 'status_name',
     title: 'Estado',
     disablePadding: false,
     align: 'center',
-    render: (status) => <>{status}</>
+    render: (status_name) => <>{status_name}</>
   },
   {
     key: 'created_at',
-    title: 'Fecha de creación',
+    title: 'Creado',
     disablePadding: false,
     align: 'left',
     render: (created_at) => (
@@ -54,6 +62,55 @@ const columns: TableColumn<SummaryToDeliveriesResponse>[] = [
     )
   }
 ]
+
+const actionsToolbar = (items: SummaryToDeliveriesResponse[]) => {
+  const [modal, setModal] = useState(false)
+
+  const handleChangeModalUpdate = () => {
+    setModal((prev) => !prev)
+  }
+  return (
+    <>
+      <Toolbar
+        sx={{
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 }
+        }}
+      >
+        <Tooltip title="Delete">
+          <span>
+            <Button
+              variant="contained"
+              disabled={items?.length <= 0}
+              sx={{
+                mr: 1,
+                background: '#F4BB43',
+                boxShadow: 'none',
+                '&:hover': {
+                  background: '#F4BB43',
+                  opacity: 0.9
+                }
+              }}
+              onClick={handleChangeModalUpdate}
+            >
+              Cambiar estados
+            </Button>
+          </span>
+        </Tooltip>
+      </Toolbar>
+      <ModalEnhanced
+        title="Actualizar estados de envíos"
+        open={modal}
+        handleClose={handleChangeModalUpdate}
+      >
+        <FormUpdateDeliveries
+          handleClose={handleChangeModalUpdate}
+          selected={items}
+        />
+      </ModalEnhanced>
+    </>
+  )
+}
 
 const DeliveriesDetails = () => {
   const dispatch = useAppDispatch()
@@ -96,6 +153,8 @@ const DeliveriesDetails = () => {
         data={data}
         isFetching={isFetching}
         columns={columns}
+        actionsToolbar={actionsToolbar}
+        showCheckbox
       />
     </ScreenWrapper>
   )

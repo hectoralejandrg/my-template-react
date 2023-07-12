@@ -16,12 +16,12 @@ interface ValuesFormik {
   rut?: string
 }
 
-interface Props {
-  selected: readonly string[]
+interface Props<T> {
+  selected: T[]
   handleClose: () => void
 }
 
-const FormUpdateDeliveries = ({ selected, handleClose }: Props) => {
+const FormUpdateDeliveries = <T extends Record<string, any>>({ selected, handleClose }: Props<T>) => {
   const dispatch = useAppDispatch()
   const { profile } = useAppSelector((state) => state.auth)
   const [changeStatuses, { isLoading }] = useUpdateStatusDeliveriesMutation()
@@ -30,11 +30,13 @@ const FormUpdateDeliveries = ({ selected, handleClose }: Props) => {
       initialValues: {
         reference: '',
         status: null,
-        comment: ''
+        comment: '',
+        name: '',
+        rut: ''
       },
       onSubmit: async ({ name, status, comment, rut }) => {
         await changeStatuses({
-          imported_ids: selected?.map((id) => id),
+          delivery_ids: selected?.map(({ id }) => id),
           status_id: status?.id,
           user_id: profile?.user_entity_id,
           evidence: {

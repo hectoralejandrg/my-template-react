@@ -6,7 +6,7 @@ import { PayloadSummaries } from '../interfaces/payloadSummaries.interface'
 import { SummaryToDeliveriesResponse } from '../interfaces/deliveries.interface'
 
 const apiSummariesTags = globalApi.enhanceEndpoints({
-  addTagTypes: ['Summaries', 'DetailsSummary']
+  addTagTypes: ['Summaries']
 })
 
 export const summariesApiSlice = apiSummariesTags.injectEndpoints({

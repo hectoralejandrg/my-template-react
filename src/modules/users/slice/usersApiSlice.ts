@@ -35,7 +35,7 @@ export const usersApiSlice = apiUsersTags.injectEndpoints({
       },
       providesTags: (data) => data?.data ? [...data?.data?.map(({ id }) => ({ type: 'Roles' as const, id })), 'Roles'] : ['Roles']
     }),
-    createUser: builder.mutation<void, { name:string, email:string, active: boolean, role: number, company?: number }>(
+    createUser: builder.mutation<void, { name:string, email:string, active: boolean, role?: number, company?: number }>(
       {
         queryFn: async (params) => {
           try {

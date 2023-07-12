@@ -35,24 +35,11 @@ const columns: TableColumn<Summary>[] = [
     render: (CountDeliveries) => <>{CountDeliveries}</>
   },
   {
-    key: 'updated_at',
-    title: 'Actualizado',
-    disablePadding: false,
-    align: 'left',
-    // eslint-disable-next-line camelcase
-    render: (updated_at) => (
-      // eslint-disable-next-line camelcase
-      <>{dayjs(updated_at as string).format('DD-MM-YYYY HH:mm')}</>
-    )
-  },
-  {
     key: 'created_at',
     title: 'Creado',
     disablePadding: false,
     align: 'left',
-    // eslint-disable-next-line camelcase
     render: (created_at) => (
-      // eslint-disable-next-line camelcase
       <>{dayjs(created_at as string).format('DD-MM-YYYY HH:mm')}</>
     )
   }

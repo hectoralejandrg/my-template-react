@@ -25,8 +25,8 @@ export const trackingApiSlice = apiTrackingTags.injectEndpoints({
     updateTracking: builder.mutation<
       void,
       {
-        imported_id: string
-        status?: number
+        id: number
+        status_id?: number
         user_id?: number
         evidence?: { comment?: string; name?: string; rut?: string; images?: string[] }
       }

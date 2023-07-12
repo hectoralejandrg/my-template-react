@@ -12,12 +12,12 @@ export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
     {page: number,
     perPage?: number,
     sort?: string,
-    pagination?: true,
+    paginate?: boolean,
     terminal?: string,
     imported_id?: string}>({
       queryFn: async (params) => {
         try {
-          const { data } = await mainApi('deliveries', { params })
+          const { data } = await mainApi('deliveries', { params: { ...params, page: params.page + 1 } })
           return { data }
         } catch (error: any) {
           return {
@@ -31,7 +31,7 @@ export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
     updateStatusDeliveries: builder.mutation<
       void,
       {
-        imported_ids: string[]
+        delivery_ids: number[]
         status_id?: number
         user_id?: number
         evidence?: { comment?: string; name?: string; rut?: string }
@@ -49,7 +49,7 @@ export const deliveriesApiSlice = apiDeliveriesTags.injectEndpoints({
           }
         }
       },
-      invalidatesTags: ['Deliveries']
+      invalidatesTags: ['Deliveries', 'DetailsSummary']
     })
   })
 })
