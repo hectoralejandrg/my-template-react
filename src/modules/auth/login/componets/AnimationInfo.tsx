@@ -7,11 +7,16 @@ import img4 from '../../../../assets/entregado.png'
 import arrow from '../../../../assets/arrow.png'
 
 const ContainerWrapper = styled('div')(({ theme }) => ({
-  display: 'flex',
   width: '100%',
   height: '100%',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
+  [theme.breakpoints.up('md')]: {
+    display: 'flex'
+  },
+  [theme.breakpoints.down('md')]: {
+    display: 'none'
+  }
 }))
 
 const LabelWrapper = styled('div')(({ theme }) => ({

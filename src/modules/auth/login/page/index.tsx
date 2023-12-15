@@ -2,6 +2,7 @@ import { Box, Grid, styled, Typography } from '@mui/material'
 import Login from '../componets/Login'
 import logo from '../../../../assets/logo_enviatrack.png'
 import AnimationInfo from '../componets/AnimationInfo'
+import SliderWithIcons from '../componets/SliderWithIcons'
 
 const LoginWrapper = styled('div')(
   () => `
@@ -90,12 +91,20 @@ const LoginPage = () => {
                   segura.
                 </Typography>
               </Grid>
-              <Grid >
+              <Grid>
                 <Login />
               </Grid>
             </Grid>
             <Grid item xs={12} md={6}>
               <AnimationInfo />
+              <SliderWithIcons
+                images={[
+                  { src: 'ordenPreparacion.png', alt: 'Orden de preparacion' },
+                  { src: 'retiradoOperador.png', alt: 'Retirado por operador' },
+                  { src: 'reparto.png', alt: 'En reparto' },
+                  { src: 'entregado.png', alt: 'Entregado' }
+                ]}
+              />
             </Grid>
           </Grid>
         </LoginWrapper>
