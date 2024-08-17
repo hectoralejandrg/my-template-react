@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const mainApi = axios.create({
-  baseURL: 'https://stage.api.enviatrack.enviame.io/v1'
+  baseURL: ''
 })
 
 mainApi.interceptors.request.use(function (config) {

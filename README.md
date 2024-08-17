@@ -1,7 +1,3 @@
-## Firebase
-Completar el archivo `.env` con los permisos de firebase, estos datos se obtienen desde la consola e ingresar al proyecto `london-stage` dentro de las configuraciones del proyecto en la seccion `Tus apps`
-
-
 ## How to start
 
 Para levantar el proyecto:
