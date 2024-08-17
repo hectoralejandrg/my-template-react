@@ -26,12 +26,6 @@ const authSlice = createSlice({
     setUser: (state, action: PayloadAction<any>) => {
       state.user = action.payload
     },
-    setPageName: (state, action: PayloadAction<string | null>) => {
-      state.pageName = action.payload
-    },
-    setProfile: (state, action: PayloadAction<Profile>) => {
-      state.profile = action.payload
-    },
     showNotification: (
       state,
       action: PayloadAction<{
@@ -56,8 +50,6 @@ export const {
   setToken,
   setUser,
   setLogout,
-  setPageName,
-  setProfile,
   showNotification,
   hideNotification
 } = authSlice.actions

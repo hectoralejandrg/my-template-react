@@ -1,12 +1,9 @@
 import { RouteObject } from 'react-router'
 import { HomeLayout } from '../layouts/AuthLayout/HomeLayout'
 import { Navigate } from 'react-router-dom'
-import { ProtectedLayout } from '../layouts/AuthLayout/ProtectedLayout'
-import SidebarLayout from '../layouts/SidebarLayout/Sidebar'
 import LoginPage from '../modules/auth/login/page'
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import SuspenseLoader from '../layouts/AuthLayout/SuspenseLoader'
-import RoleRoute from '../layouts/AuthLayout/RoleRoute'
 import ErrorPage from '../layouts/AuthLayout/ErrorPage'
 
 // eslint-disable-next-line
@@ -17,19 +14,7 @@ const Loader = (Component: any) => (props: any) =>
     </Suspense>
   )
 
-const PageRecovery = Loader(lazy(() => import('../modules/auth/recovery/page')))
-const PageResetPassword = Loader(
-  lazy(() => import('../modules/auth/recovery/page/resetPassword'))
-)
-// const Authentication = Loader(lazy(() => import('./modules/auth/login/page')))
-const PageTracking = Loader(lazy(() => import('../modules/tracking/pages')))
-const PageDeliveries = Loader(lazy(() => import('../modules/deliveries/pages')))
-const PageUsers = Loader(lazy(() => import('../modules/users/pages')))
-const PageCompanies = Loader(lazy(() => import('../modules/companies/pages')))
-const PageSummaries = Loader(lazy(() => import('../modules/summaries/pages')))
-const PageDeliveriesDetails = Loader(
-  lazy(() => import('../modules/summaries/pages/DeliveriesDetails'))
-)
+// const PageRecovery = Loader(lazy(() => import('../modules/auth/recovery/page')))
 
 const routes: RouteObject[] = [
   {
@@ -37,60 +22,7 @@ const routes: RouteObject[] = [
     element: <HomeLayout />,
     children: [
       { path: '', element: <Navigate to="/login" replace /> },
-      { path: 'login', element: <LoginPage /> },
-      { path: 'recovery-password', element: <PageRecovery /> },
-      { path: 'reset-password', element: <PageResetPassword /> }
-    ]
-  },
-  {
-    path: '',
-    element: <ProtectedLayout />,
-    children: [
-      {
-        path: '',
-        element: <SidebarLayout />,
-        children: [
-          {
-            path: '',
-            element: <Navigate to="/tracking" />
-          },
-          {
-            path: 'tracking',
-            element: (
-              <RoleRoute roles={[1, 2, 3]} component={<PageTracking />} />
-            )
-          },
-          {
-            path: 'deliveries',
-            element: (
-              <RoleRoute roles={[1, 2, 3]} component={<PageDeliveries />} />
-            )
-          },
-          {
-            path: 'summaries',
-            element: (
-              <RoleRoute roles={[1, 2, 3]} component={<PageSummaries />} />
-            )
-          },
-          {
-            path: 'summaries/deliveries/:id',
-            element: (
-              <RoleRoute
-                roles={[1, 2, 3]}
-                component={<PageDeliveriesDetails />}
-              />
-            )
-          },
-          {
-            path: 'users',
-            element: <RoleRoute roles={[1, 2]} component={<PageUsers />} />
-          },
-          {
-            path: 'companies',
-            element: <RoleRoute roles={[1]} component={<PageCompanies />} />
-          }
-        ]
-      }
+      { path: 'login', element: <LoginPage /> }
     ]
   },
   {
@@ -100,3 +32,45 @@ const routes: RouteObject[] = [
 ]
 
 export default routes
+
+// const routes: RouteObject[] = [
+//   {
+//     // Home sin permiso, rutas publicas
+//     path: '*',
+//     element: <HomeLayout />,
+//     children: [
+//       { path: '', element: <Navigate to="/login" replace /> },
+//       { path: 'login', element: <LoginPage /> }
+//     ]
+//   },
+//   {
+//     // rutas protegidas y con roles
+//     path: '',
+//     element: <ProtectedLayout />,
+//     children: [
+//       {
+//         path: '',
+//         element: <SidebarLayout />,
+//         children: [
+//           {
+//             path: '',
+//             element: <Navigate to="/tracking" />
+//           },
+//           {
+//             path: 'summaries/deliveries/:id',
+//             element: (
+//               <RoleRoute
+//                 roles={[1, 2, 3]}
+//                 component={<PageDeliveriesDetails />}
+//               />
+//             )
+//           }
+//         ]
+//       }
+//     ]
+//   },
+//   {
+//     path: 'unauthorized',
+//     element: <ErrorPage />
+//   }
+// ]
